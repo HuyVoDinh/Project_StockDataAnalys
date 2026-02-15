@@ -55,7 +55,7 @@ def check_supply_test(company_data_day_current, company_data_day_before):
 #Do not use OBV to buy at the bottom
 def check_obv(company_data_day_current, company_data_day_before):
     if company_data_day_current.on_balance_volume > company_data_day_before.on_balance_volume:
-        return 1
+        return 1    
     return 0
 
 #Filter 7 - detect
