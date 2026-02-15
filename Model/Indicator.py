@@ -10,3 +10,9 @@ class DonchianChannel:
         self.Upper_Channel = Upper_Channel
         self.Lower_Channel = Lower_Channel
         self.Middle = Middle
+
+class MACD:
+    def __init__(self,MACD, signal, histogram = 0):
+        self.MACD = MACD
+        self.signal = signal
+        self.histogram = histogram
