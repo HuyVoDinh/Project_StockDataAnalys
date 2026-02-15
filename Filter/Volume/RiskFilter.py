@@ -37,6 +37,6 @@ def check_upper_gap(resistance, entry, stoploss):
 # |Entry – MA20| ≤ 3%
 # Xa MA20 → stop gần → dễ quét
 def check_ma20_price(entry, company_data):
-    if abs(entry - company_data.MA20_price)/ entry <= 0.03:
+    if abs(entry - company_data.moving_average.ma20_price)/ entry <= 0.03:
         return 1
     return 0

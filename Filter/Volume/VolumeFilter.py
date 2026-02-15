@@ -11,10 +11,10 @@ def find_minimum_liquidity(company_data):
 #Volume increased compared to average.
 def find_smart_market(company_data):
     # < 1.2 is weak volume
-    if company_data.MA20_volume / company_data.volume < 1.2:
+    if company_data.moving_average.ma20_volume / company_data.volume < 1.2:
         return -1
     # > 2.5 is fomo volume
-    elif company_data.MA20_volume / company_data.volume > 2.5:
+    elif company_data.moving_average.ma20_volume / company_data.volume > 2.5:
         return 0
     # 1.3 - 1.8 is smart money
     else: return 1

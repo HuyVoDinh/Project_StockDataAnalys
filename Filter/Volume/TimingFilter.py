@@ -21,7 +21,7 @@ from Model import Indicator
 #
 # Ưu tiên nến rút chân / doji
 def setup_retest(company_data_current, company_data_previous):
-    if(company_data_current.price > company_data_current.MA20_price and company_data_current.volume < company_data_previous.volume):
+    if(company_data_current.price > company_data_current.moving_average.ma20_price and company_data_current.volume < company_data_previous.volume):
         return 1
     return 0
 #RSI từ 60 → 55 → quay đầu tăng
@@ -37,7 +37,7 @@ def getting_back_on_track_for_recovery(company_data_current, company_data_previo
 #
 #If entry volume > 2× MA20 → buy at the peak
 def confirm_entry_point(company_data_current, company_data_previous):
-    if(company_data_current.volume > company_data_previous.volume and company_data_current.volume < 2 * company_data_current.MA20_volume):
+    if(company_data_current.volume > company_data_previous.volume and company_data_current.volume < 2 * company_data_current.moving_average.ma20_volume):
         return 1
     return 0
 # Giá chạm BB Middle

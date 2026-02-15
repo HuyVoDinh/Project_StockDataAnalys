@@ -15,8 +15,8 @@ from Model import Company
 # MA10 ≥ MA20
 def moving_average_filter(company_data_current, company_data_previous):
     if (company_data_current.close_price > company_data_current.MA20_price and
-        company_data_previous.MA20_price < company_data_current.MA20_price and
-        company_data_current.MA10_price >= company_data_previous.MA20_price
+        company_data_previous.moving_average.ma20_price < company_data_current.moving_average.ma20_price and
+        company_data_current.moving_average.ma10_price >= company_data_previous.moving_average.ma20_price
     ):
         return 1
     return 0
@@ -52,7 +52,7 @@ def price_action_confirms_trend(company_data_current, company_data_previous):
     return 0
 
 def check_stable_uptrend(company_data):
-    if(company_data.MA10_price > company_data.MA20_price and company_data.MA20_price > company_data.MA50_price):
+    if(company_data.MA10_price > company_data.moving_average.ma20_price and company_data.moving_average.ma20_price > company_data.moving_average.ma50_price):
         return 1
     return 0
 # Price is far from MA20 > 7%
@@ -61,7 +61,7 @@ def check_stable_uptrend(company_data):
 # → Do not trade short-term (T+)
 #Filter - warning
 def check_end_trend(company_data):
-    if(company_data.price / company_data.MA20_price > 0.07 and
+    if(company_data.price / company_data.moving_average.ma20_price > 0.07 and
     company_data.RSI_14 > 70 and company_data.ADX < 40):
         return -1
     return 1

@@ -16,3 +16,12 @@ class MACD:
         self.MACD = MACD
         self.signal = signal
         self.histogram = histogram
+
+class MovingAverage:
+    def __init__(self, ma10_price, ma10_volume, ma20_price, ma20_volume, ma50_price, ma50_volume):
+        self.ma10_price = ma10_price
+        self.ma10_volume = ma10_volume
+        self.ma20_price = ma20_price
+        self.ma20_volume = ma20_volume
+        self.ma50_price = ma50_price
+        self.ma50_volume = ma50_volume
