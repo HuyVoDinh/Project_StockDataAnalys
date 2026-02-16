@@ -21,7 +21,7 @@ from Model import Indicator
 #
 # Ưu tiên nến rút chân / doji
 def setup_retest(company_data_current, company_data_previous):
-    if(company_data_current.price > company_data_current.moving_average.ma20_price and company_data_current.volume < company_data_previous.volume):
+    if(company_data_current.price.close_price > company_data_current.moving_average.ma20_price and company_data_current.volume < company_data_previous.volume):
         return 1
     return 0
 #RSI từ 60 → 55 → quay đầu tăng
@@ -45,7 +45,7 @@ def confirm_entry_point(company_data_current, company_data_previous):
 # Bật lên
 # → xác suất T+ cao
 def setup_middle_bands(company_data_current, company_data_previous):
-    if(company_data_previous.Bollinger_Bands.Middle > company_data_previous.price and company_data_current.Bollinger_Bands.Middle < company_data_current.price):
+    if(company_data_previous.Bollinger_Bands.Middle > company_data_previous.price.close_price and company_data_current.Bollinger_Bands.Middle < company_data_current.price):
         return 1
     return 0
 

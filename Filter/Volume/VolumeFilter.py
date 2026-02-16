@@ -35,7 +35,7 @@ def check_gather_goods(company_data_day1, company_data_day2, company_data_day3):
 def check_volume_and_price(company_data, volume_yesterday):
     if company_data.volume < volume_yesterday:
         return -1
-    elif (company_data.close_price - company_data.open_price) / company_data.open_price < 0.03:
+    elif (company_data.price.close_price - company_data.price.open_price) / company_data.price.open_price < 0.03:
         return 1
 
 #Filter 5 - detect
@@ -44,7 +44,7 @@ def check_volume_and_price(company_data, volume_yesterday):
 #Price does not fall.
 #→ likely to rise again the next day.
 def check_supply_test(company_data_day_current, company_data_day_before):
-    if company_data_day_current.volume < company_data_day_before.volume and company_data_day_current.price >= company_data_day_before.price:
+    if company_data_day_current.volume < company_data_day_before.volume and company_data_day_current.price.close_price >= company_data_day_before.price.close_price:
         return 1
     return 0
 
@@ -61,14 +61,14 @@ def check_obv(company_data_day_current, company_data_day_before):
 #Filter 7 - detect
 #The money is starting to come in.
 def check_vo(company_data_day_current):
-    if company_data_day_current.Volume_Oscillator > 0 and (company_data_day_current.close_price - company_data_day_current.open_price) / company_data_day_current.open_price < 0.03:
+    if company_data_day_current.Volume_Oscillator > 0 and (company_data_day_current.price.close_price - company_data_day_current.price.open_price) / company_data_day_current.open_price < 0.03:
         return 1
     return 0
 
 #Filter 8 - detect
 #Distinguishing between genuine price increases and bull traps.
 def check_accumulation_and_distribution(company_data_day_current, company_data_day_before):
-    if company_data_day_current.price >= company_data_day_before.price and (company_data_day_current.close_price - company_data_day_current.open_price) / company_data_day_current.open_price < 0.03 and company_data_day_current.Accumulation_Distribution < company_data_day_before.Accumulation_Distribution:
+    if company_data_day_current.price.close_price >= company_data_day_before.price.close_price and (company_data_day_current.price.close_price - company_data_day_current.price.open_price) / company_data_day_current.price.open_price < 0.03 and company_data_day_current.Accumulation_Distribution < company_data_day_before.Accumulation_Distribution:
         return -1
-    elif (company_data_day_current.close_price - company_data_day_current.open_price) / company_data_day_current.open_price < 0.015 and  company_data_day_current.Accumulation_Distribution > company_data_day_before.Accumulation_Distribution:
+    elif (company_data_day_current.price.close_price - company_data_day_current.price.open_price) / company_data_day_current.price.open_price < 0.015 and  company_data_day_current.Accumulation_Distribution > company_data_day_before.Accumulation_Distribution:
         return 1

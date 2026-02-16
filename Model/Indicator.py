@@ -25,3 +25,10 @@ class MovingAverage:
         self.ma20_volume = ma20_volume
         self.ma50_price = ma50_price
         self.ma50_volume = ma50_volume
+
+class Price:
+    def __init__(self, high_price, low_price, open_price, close_price):
+        self.high_price = high_price
+        self.low_price = low_price
+        self.open_price = open_price
+        self.close_price = close_price

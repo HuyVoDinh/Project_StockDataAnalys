@@ -8,12 +8,8 @@ class Company():
         self.company_data = company_data
 
 class CompanyData():
-    def __init__(self, price, high_price, low_price, open_price, close_price, volume, time, moving_average, OBV, VO, AD, atr14, atr_ma5, bollinger_band,donchian_channel, rsi14, adx14, macd):
+    def __init__(self, price, volume, time, moving_average, OBV, VO, AD, atr14, atr_ma5, bollinger_band,donchian_channel, rsi14, adx14, macd):
         self.price = price
-        self.high_price = high_price
-        self.low_price = low_price
-        self.open_price = open_price
-        self.close_price = close_price
         self.volume = volume
         self.time = time
         self.moving_average = moving_average
