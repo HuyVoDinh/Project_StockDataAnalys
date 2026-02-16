@@ -1,11 +1,13 @@
+from ast import List
 from platform import processor
-import Indicator
+from Model.Indicator import Price
+
 
 
 class Company():
-    def __init__(self, symbol, company_data ):
+    def __init__(self, symbol: str):
         self.symbol = symbol
-        self.company_data = company_data
+        self.company_data: List[CompanyData] = []
 
 class CompanyData():
     def __init__(self, price, volume, time, moving_average, OBV, VO, AD, atr14, atr_ma5, bollinger_band,donchian_channel, rsi14, adx14, macd):

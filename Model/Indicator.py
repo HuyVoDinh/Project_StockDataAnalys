@@ -27,8 +27,24 @@ class MovingAverage:
         self.ma50_volume = ma50_volume
 
 class Price:
-    def __init__(self, high_price, low_price, open_price, close_price):
+    def __init__(self, ref_price, high_price, low_price, open_price, close_price):
+        self.ref_price = ref_price
         self.high_price = high_price
         self.low_price = low_price
         self.open_price = open_price
         self.close_price = close_price
+
+    def __str__(self):
+        return (f"Ref: {self.ref_price}",
+                f"High price: {self.high_price}",
+                f"Low price: {self.low_price}",
+                f"Open: {self.open_price}",
+                f"Close: {self.close_price}"
+                )
+    def __repr__(self):
+        return (f"Ref: {self.ref_price}",
+                f"High price: {self.high_price}",
+                f"Low price: {self.low_price}",
+                f"Open: {self.open_price}",
+                f"Close: {self.close_price}"
+                )
