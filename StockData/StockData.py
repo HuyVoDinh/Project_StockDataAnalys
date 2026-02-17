@@ -113,6 +113,7 @@ def Volume_Oscillator():
     #                    ) * 100
     print(df)
 
+#wrong result
 def Accumulation_Distribution():
     stock = Vnstock().stock(symbol='HPG', source='VCI')
     df = stock.quote.history(start='2025-12-01', end='2026-02-13')
@@ -123,5 +124,77 @@ def Accumulation_Distribution():
         close=df['close'],
         volume=df['volume']
     ).acc_dist_index()
+
+    print(df)
+
+def Average_True_Range():
+    stock = Vnstock().stock(symbol='HPG', source='VCI')
+    df = stock.quote.history(start='2025-12-01', end='2026-02-13')
+
+    df['atr_14'] = ta.volatility.AverageTrueRange(
+        high=df['high'],
+        low=df['low'],
+        close=df['close'],
+        window=14
+    ).average_true_range()
+
+    print(df)
+
+def Average_True_Range_MA5():
+    stock = Vnstock().stock(symbol='HPG', source='VCI')
+    df = stock.quote.history(start='2025-12-01', end='2026-02-13')
+
+    df['atr_14'] = ta.volatility.AverageTrueRange(
+        high=df['high'],
+        low=df['low'],
+        close=df['close'],
+        window=14
+    ).average_true_range()
+
+    df['atr_ma5'] = df['atr_14'].rolling(5).mean()
+
+    print(df)
+
+def Bollinger_Bands():
+    stock = Vnstock().stock(symbol='HPG', source='VCI')
+    df = stock.quote.history(start='2025-12-01', end='2026-02-13')
+
+    bb = ta.volatility.BollingerBands(
+        close=df['close'],
+        window=20,
+        window_dev=2
+    )
+
+    df['bb_middle'] = bb.bollinger_mavg()
+    df['bb_upper'] = bb.bollinger_hband()
+    df['bb_lower'] = bb.bollinger_lband()
+
+    print((df))
+
+def Donchian_Channel():
+    stock = Vnstock().stock(symbol='HPG', source='VCI')
+    df = stock.quote.history(start='2025-12-01', end='2026-02-13')
+
+    dc = ta.volatility.DonchianChannel(
+        high=df['high'],
+        low=df['low'],
+        close=df['close'],
+        window=20
+    )
+
+    df['dc_upper'] = dc.donchian_channel_hband()
+    df['dc_lower'] = dc.donchian_channel_lband()
+    df['dc_middle'] = dc.donchian_channel_mband()
+
+    print(df)
+
+def Relative_Strength_Index():
+    stock = Vnstock().stock(symbol='HPG', source='VCI')
+    df = stock.quote.history(start='2025-12-01', end='2026-02-13')
+
+    df['rsi_14'] = ta.momentum.RSIIndicator(
+        close=df['close'],
+        window=14
+    ).rsi()
 
     print(df)
