@@ -198,3 +198,37 @@ def Relative_Strength_Index():
     ).rsi()
 
     print(df)
+
+def Average_Directional_Index():
+    stock = Vnstock().stock(symbol='HPG', source='VCI')
+    df = stock.quote.history(start='2025-12-01', end='2026-02-13')
+
+    adx = ta.trend.ADXIndicator(
+        high=df['high'],
+        low=df['low'],
+        close=df['close'],
+        window=14
+    )
+
+    df['adx_14'] = adx.adx()
+    df['plus_di'] = adx.adx_pos()
+    df['minus_di'] = adx.adx_neg()
+
+    print(df)
+
+def Moving_Average_Convergence_Divergence():
+    stock = Vnstock().stock(symbol='HPG', source='VCI')
+    df = stock.quote.history(start='2025-12-01', end='2026-02-13')
+
+    macd = ta.trend.MACD(
+        close=df['close'],
+        window_slow=26,
+        window_fast=12,
+        window_sign=9
+    )
+
+    df['macd'] = macd.macd()
+    df['macd_signal'] = macd.macd_signal()
+    df['macd_hist'] = macd.macd_diff()
+
+    print(df)
