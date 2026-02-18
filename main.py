@@ -1,9 +1,6 @@
 from Model.Indicator import Price
 from StockData import StockData
 from Model.Company import Company
-from StockData.StockData import listing_information_all_symbols, get_trading_price, example, On_Balance_Volume, \
-    Volume_Oscillator, Accumulation_Distribution, Average_True_Range,Average_True_Range_MA5, Bollinger_Bands, Donchian_Channel, \
-    Relative_Strength_Index, Moving_Average_Convergence_Divergence
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -11,4 +8,3 @@ if __name__ == '__main__':
     # symbols_list = ['NVL']
     # data = get_trading_price(company.symbol)
     # print(data.head())
-    Moving_Average_Convergence_Divergence()
