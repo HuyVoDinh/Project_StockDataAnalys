@@ -18,13 +18,10 @@ class MACD:
         self.histogram = histogram
 
 class MovingAverage:
-    def __init__(self, ma10_price, ma10_volume, ma20_price, ma20_volume, ma50_price, ma50_volume):
-        self.ma10_price = ma10_price
-        self.ma10_volume = ma10_volume
-        self.ma20_price = ma20_price
-        self.ma20_volume = ma20_volume
-        self.ma50_price = ma50_price
-        self.ma50_volume = ma50_volume
+    def __init__(self, price, volume, window):
+        self.ma_price = price
+        self.ma_volume = volume
+        self.window = window
 
 class Price:
     def __init__(self, ref_price, high_price, low_price, open_price, close_price):
@@ -48,3 +45,9 @@ class Price:
                 f"Open: {self.open_price}",
                 f"Close: {self.close_price}"
                 )
+
+class AverageDirectionalIndex:
+    def __init__(self, ADX, plus_DI, minus_DI):
+        self.ADX = ADX
+        self.plus_DI = plus_DI
+        self.minus_DI = minus_DI
