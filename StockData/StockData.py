@@ -7,43 +7,67 @@ from Model.Indicator import Price
 from vnstock import Vnstock
 
 class StockData:
-    def __init__(self, symbol: str, source="VCI"):
+    def __init__(self, symbol: str, start, end, source="VCI"):
         self.symbol = symbol
         self.source = source
+        self.quote = None
+        self.listing = None
+        self.trading = None
+        self.stock = None
+        self.data_frame = None
+
+    def init_listing(self):
+        print("Initializing Listing")
+        self.listing = Listing(source=self.source)
+        print("Listing Initialized")
+
+    def init_Quote(self):
+        print("Initializing Quote")
+        self.quote = Quote(self.symbol, source=self.source)
+        print("Quote Initialized")
+
+    def init_Trading(self):
+        print("Initializing Trading")
+        self.trading = Trading(source=self.source, symbol=self.symbol)
+        print("Trading initialized")
+
+    def init_Stock(self):
+        print("Initializing stock...")
+        self.stock = Vnstock(symbol=self.symbol, source=self.source)
+        print("Stock is initialized")
+
+    def update_data_frame(self, start, end):
+        if self.stock is None:
+            print("Stock is not initialized.")
+            self.init_Stock()
+        self.data_frame = self.stock.quote.history(start=start, end=end)
 
     def listing_information_all_symbols(self):
-        listing = Listing(source=self.source)
-        return listing.all_symbols()
+        return self.listing.all_symbols()
 
     #Exchange: HOSE, HNX
     def listing_information_by_exchange(self, exchange: str):
-        listing = Listing(source=self.source)
-        return listing.symbols_by_exchange(exchange)
+        return self.listing.symbols_by_exchange(exchange)
 
     #VN30, VN100
     def listing_information_by_group(self, group: str):
-        listing = Listing(source=self.source)
-        return listing.symbols_by_group(group)
+        return self.listing.symbols_by_group(group)
 
     def listing_information_by_industries(self):
-        listing = Listing(source=self.source)
-        return listing.symbols_by_industries()
+        return self.listing.symbols_by_industries()
 
     def listing_information_by_industries_icb(self):
-        listing = Listing(source=self.source)
-        return listing.industries_icb()
+        return self.listing.industries_icb()
 
     def get_history_price(self, symbol: str, length: str, interval: str):
-        quote = Quote(symbol, source=self.source)
-        return quote.history(length=length, interval=interval)
+        return self.quote.history(length=length, interval=interval)
 
     def get_historical_price(self, symbol: str, start: str, end: str, interval: str):
-        quote = Quote(symbol, source=self.source)
-        return quote.history(start=start, end=end, interval=interval)
+        return self.quote.history(start=start, end=end, interval=interval)
 
     def get_trading_price(self, symbols_list :list[str]):
-        trading = Trading(source=self.source,symbol="VCI")
-        board = trading.price_board(symbols_list= symbols_list)
+
+        board = self.trading.price_board(symbols_list= symbols_list)
 
         trading_info = board[[('listing', 'symbol'),
                               ('listing', 'ref_price'),
@@ -74,165 +98,123 @@ class StockData:
         return volume
 
     def example(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-15')
+        self.data_frame['vol_ma10'] = self.data_frame['volume'].rolling(10).mean()
+        self.data_frame['vol_ma20'] = self.data_frame['volume'].rolling(20).mean()
+        self.data_frame['vol_ma50'] = self.data_frame['volume'].rolling(50).mean()
+        self.data_frame['price_ma10'] = self.data_frame['close'].rolling(10).mean()
+        self.data_frame['price_ma20'] = self.data_frame['close'].rolling(20).mean()
+        self.data_frame['price_ma50'] = self.data_frame['close'].rolling(50).mean()
+        print(self.data_frame)
 
-        df['vol_ma10'] = df['volume'].rolling(10).mean()
-        df['vol_ma20'] = df['volume'].rolling(20).mean()
-        df['vol_ma50'] = df['volume'].rolling(50).mean()
-        df['price_ma10'] = df['close'].rolling(10).mean()
-        df['price_ma20'] = df['close'].rolling(20).mean()
-        df['price_ma50'] = df['close'].rolling(50).mean()
-        print(df)
 
-    #sai dâta
     def On_Balance_Volume(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2026-02-12', end='2026-02-13')
-
-        df['obv'] = ta.volume.OnBalanceVolumeIndicator(
-            close=df['close'],
-            volume=df['volume']
+        self.data_frame['obv'] = ta.volume.OnBalanceVolumeIndicator(
+            close=self.data_frame['close'],
+            volume=self.data_frame['volume']
         ).on_balance_volume()
 
-        print(df)
+        print(self.data_frame)
 
-    #sai data
+
     def Volume_Oscillator(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-31', end='2026-02-13')
-
         # Tính MA volume
-        df['vol_ma5'] = df['volume'].rolling(5).mean()
-        df['vol_ma20'] = df['volume'].rolling(20).mean()
+        self.data_frame['vol_ma5'] = self.data_frame['volume'].rolling(5).mean()
+        self.data_frame['vol_ma20'] = self.data_frame['volume'].rolling(20).mean()
+        self.data_frame['volume_osc'] = ((self.data_frame['vol_ma5'] - self.data_frame['vol_ma20']) / self.data_frame['vol_ma20']) * 100
+        print(self.data_frame)
 
-        # Volume Oscillator (dạng %)
-        df['volume_osc'] = ((df['vol_ma5'] - df['vol_ma20']) / df['vol_ma20']) * 100
 
-        # df['vol_ema5'] = df['volume'].ewm(span=5, adjust=False).mean()
-        # df['vol_ema20'] = df['volume'].ewm(span=20, adjust=False).mean()
-        #
-        # df['volume_osc'] = (
-        #                            (df['vol_ema5'] - df['vol_ema20']) / df['vol_ema20']
-        #                    ) * 100
-        print(df)
-
-    #wrong result
     def Accumulation_Distribution(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
-        df['ad'] = ta.volume.AccDistIndexIndicator(
-            high=df['high'],
-            low=df['low'],
-            close=df['close'],
-            volume=df['volume']
+        self.data_frame['ad'] = ta.volume.AccDistIndexIndicator(
+            high=self.data_frame['high'],
+            low=self.data_frame['low'],
+            close=self.data_frame['close'],
+            volume=self.data_frame['volume']
         ).acc_dist_index()
 
-        print(df)
+        print(self.data_frame)
 
     def Average_True_Range(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
-        df['atr_14'] = ta.volatility.AverageTrueRange(
-            high=df['high'],
-            low=df['low'],
-            close=df['close'],
+        self.data_frame['atr_14'] = ta.volatility.AverageTrueRange(
+            high=self.data_frame['high'],
+            low=self.data_frame['low'],
+            close=self.data_frame['close'],
             window=14
         ).average_true_range()
 
-        print(df)
+        print(self.data_frame)
 
     def Average_True_Range_MA5(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
-        df['atr_14'] = ta.volatility.AverageTrueRange(
-            high=df['high'],
-            low=df['low'],
-            close=df['close'],
+        self.data_frame['atr_14'] = ta.volatility.AverageTrueRange(
+            high=self.data_frame['high'],
+            low=self.data_frame['low'],
+            close=self.data_frame['close'],
             window=14
         ).average_true_range()
 
-        df['atr_ma5'] = df['atr_14'].rolling(5).mean()
+        self.data_frame['atr_ma5'] = self.data_frame['atr_14'].rolling(5).mean()
 
-        print(df)
+        print(self.data_frame)
 
     def Bollinger_Bands(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
         bb = ta.volatility.BollingerBands(
-            close=df['close'],
+            close=self.data_frame['close'],
             window=20,
             window_dev=2
         )
 
-        df['bb_middle'] = bb.bollinger_mavg()
-        df['bb_upper'] = bb.bollinger_hband()
-        df['bb_lower'] = bb.bollinger_lband()
+        self.data_frame['bb_middle'] = bb.bollinger_mavg()
+        self.data_frame['bb_upper'] = bb.bollinger_hband()
+        self.data_frame['bb_lower'] = bb.bollinger_lband()
 
-        print((df))
+        print((self.data_frame))
 
     def Donchian_Channel(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
         dc = ta.volatility.DonchianChannel(
-            high=df['high'],
-            low=df['low'],
-            close=df['close'],
+            high=self.data_frame['high'],
+            low=self.data_frame['low'],
+            close=self.data_frame['close'],
             window=20
         )
 
-        df['dc_upper'] = dc.donchian_channel_hband()
-        df['dc_lower'] = dc.donchian_channel_lband()
-        df['dc_middle'] = dc.donchian_channel_mband()
+        self.data_frame['dc_upper'] = dc.donchian_channel_hband()
+        self.data_frame['dc_lower'] = dc.donchian_channel_lband()
+        self.data_frame['dc_middle'] = dc.donchian_channel_mband()
 
-        print(df)
+        print(self.data_frame)
 
     def Relative_Strength_Index(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
-        df['rsi_14'] = ta.momentum.RSIIndicator(
-            close=df['close'],
+        self.data_frame['rsi_14'] = ta.momentum.RSIIndicator(
+            close=self.data_frame['close'],
             window=14
         ).rsi()
 
-        print(df)
+        print(self.data_frame)
 
     def Average_Directional_Index(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
         adx = ta.trend.ADXIndicator(
-            high=df['high'],
-            low=df['low'],
-            close=df['close'],
+            high=self.data_frame['high'],
+            low=self.data_frame['low'],
+            close=self.data_frame['close'],
             window=14
         )
 
-        df['adx_14'] = adx.adx()
-        df['plus_di'] = adx.adx_pos()
-        df['minus_di'] = adx.adx_neg()
+        self.data_frame['adx_14'] = adx.adx()
+        self.data_frame['plus_di'] = adx.adx_pos()
+        self.data_frame['minus_di'] = adx.adx_neg()
 
-        print(df)
+        print(self.data_frame)
 
     def Moving_Average_Convergence_Divergence(self):
-        stock = Vnstock().stock(symbol='HPG', source=self.source)
-        df = stock.quote.history(start='2025-12-01', end='2026-02-13')
-
         macd = ta.trend.MACD(
-            close=df['close'],
+            close=self.data_frame['close'],
             window_slow=26,
             window_fast=12,
             window_sign=9
         )
 
-        df['macd'] = macd.macd()
-        df['macd_signal'] = macd.macd_signal()
-        df['macd_hist'] = macd.macd_diff()
+        self.data_frame['macd'] = macd.macd()
+        self.data_frame['macd_signal'] = macd.macd_signal()
+        self.data_frame['macd_hist'] = macd.macd_diff()
 
-        print(df)
+        print(self.data_frame)
