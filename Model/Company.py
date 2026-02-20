@@ -10,7 +10,7 @@ class Company():
         self.company_data: List[CompanyData] = []
 
 class CompanyData():
-    def __init__(self, price, volume, time, moving_average, OBV, VO, AD, atr14, atr_ma5, bollinger_band,donchian_channel, rsi14, adx14, macd):
+    def __init__(self, price, volume, time, moving_average, OBV, VO, AD, atr14, atr_ma5, bollinger_band,donchian_channel, rsi14, adx14, macd, StdDev):
         self.price = price
         self.volume = volume
         self.time = time
@@ -25,3 +25,4 @@ class CompanyData():
         self.RSI_14 = rsi14
         self.ADX_14 = adx14
         self.MACD = macd
+        self.StdDev_20 = StdDev
