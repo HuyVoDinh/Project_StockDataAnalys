@@ -26,7 +26,7 @@ class TimingFilter:
     #
     # Ưu tiên nến rút chân / doji
     def setup_retest(self, company_data_current, company_data_previous):
-        if(company_data_current.price.close_price > company_data_current.moving_average.ma20_price and company_data_current.volume < company_data_previous.volume):
+        if(company_data_current.price.close_price > company_data_current.moving_average_20.ma_price and company_data_current.volume < company_data_previous.volume):
             return Trend.Recovery
         return Trend.Weak
     #RSI từ 60 → 55 → quay đầu tăng
@@ -42,7 +42,7 @@ class TimingFilter:
     #
     #If entry volume > 2× MA20 → buy at the peak
     def confirm_entry_point(self, company_data_current, company_data_previous):
-        if company_data_current.volume > 2 * company_data_current.moving_average.ma20_volume:
+        if company_data_current.volume > 2 * company_data_current.moving_average_20.ma_volume:
             return Trend.Fomo
         elif(company_data_current.volume > company_data_previous.volume):
             return Trend.Recovery
@@ -52,7 +52,7 @@ class TimingFilter:
     # Bật lên
     # → xác suất T+ cao
     def setup_middle_bands(self, company_data_current, company_data_previous):
-        if(company_data_previous.Bollinger_Bands.Middle > company_data_previous.price.close_price and company_data_current.Bollinger_Bands.Middle < company_data_current.price):
+        if(company_data_previous.Bollinger_Bands.Middle > company_data_previous.price.close_price and company_data_current.Bollinger_Bands.Middle < company_data_current.price.close_price):
             return Trend.Good
         return Trend.Weak
 

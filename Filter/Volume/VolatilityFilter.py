@@ -41,13 +41,13 @@ class VolatilityFilter:
     # < 1% → ì
     # 5% → easy to jerk violently, difficult to hold
     def atr_filter(self, company_data):
-        if company_data.atr14 / company_data.price.close_price < 0.01:
+        if company_data.ATR_14 / company_data.price.close_price < 0.01:
             return Emplitude.Weak
-        elif company_data.atr14 / company_data.price.close_price > 0.05:
+        elif company_data.ATR_14 / company_data.price.close_price > 0.05:
             return Emplitude.Bulltrap
 
         #ATR slightly increased(good setup) Today's ATR > ATR MA5 → Volatility is opening up
-        if company_data.atr14 > company_data.atr_ma5:
+        if company_data.ATR_14 > company_data.ATR_MA5:
             return Emplitude.Good
         return Emplitude.Weak
 

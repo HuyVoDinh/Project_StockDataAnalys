@@ -1,35 +1,35 @@
 
 class BollingerBands:
-    def __init__(self,BB_Upper, BB_Lower, Middle):
-        self.BB_Upper = BB_Upper
-        self.BB_Lower = BB_Lower
-        self.Middle = Middle
+    def __init__(self):
+        self.BB_Upper = None
+        self.BB_Lower = None
+        self.Middle = None
 
 class DonchianChannel:
-    def __init__(self,Upper_Channel, Lower_Channel, Middle):
-        self.Upper_Channel = Upper_Channel
-        self.Lower_Channel = Lower_Channel
-        self.Middle = Middle
+    def __init__(self):
+        self.Upper_Channel = None
+        self.Lower_Channel = None
+        self.Middle = None
 
-class MACD:
-    def __init__(self,MACD, signal, histogram = 0):
-        self.MACD = MACD
-        self.signal = signal
-        self.histogram = histogram
+class Moving_Average_Convergence_Divergence:
+    def __init__(self):
+        self.MACD = None
+        self.signal = None
+        self.histogram = None
 
 class MovingAverage:
-    def __init__(self, price, volume, window):
-        self.ma_price = price
-        self.ma_volume = volume
-        self.window = window
+    def __init__(self):
+        self.ma_price = None
+        self.ma_volume = None
+        self.window = None
 
 class Price:
-    def __init__(self, ref_price, high_price, low_price, open_price, close_price):
-        self.ref_price = ref_price
-        self.high_price = high_price
-        self.low_price = low_price
-        self.open_price = open_price
-        self.close_price = close_price
+    def __init__(self):
+        self.ref_price = None
+        self.high_price = None
+        self.low_price = None
+        self.open_price = None
+        self.close_price = None
 
     def __str__(self):
         return (f"Ref: {self.ref_price}",
@@ -47,7 +47,7 @@ class Price:
                 )
 
 class AverageDirectionalIndex:
-    def __init__(self, ADX, plus_DI, minus_DI):
-        self.ADX = ADX
-        self.plus_DI = plus_DI
-        self.minus_DI = minus_DI
+    def __init__(self):
+        self.ADX = None
+        self.plus_DI = None
+        self.minus_DI = None

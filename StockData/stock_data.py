@@ -3,12 +3,11 @@ import ta
 from vnstock import Listing
 from vnstock import Quote, Trading
 from Model import Indicator
-from Model.Indicator import Price, MovingAverage, BollingerBands, DonchianChannel, AverageDirectionalIndex, MACD
+from Model.Indicator import Price, MovingAverage, BollingerBands, DonchianChannel, AverageDirectionalIndex, Moving_Average_Convergence_Divergence
 from vnstock import Vnstock
 
 class StockData:
-    def __init__(self, symbol: str, source="VCI"):
-        self.symbol = symbol
+    def __init__(self, source="VCI"):
         self.source = source
         self.listing = None
         self.trading = None

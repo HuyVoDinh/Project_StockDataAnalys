@@ -7,8 +7,8 @@ class VolumeFilter:
 
     #Filter 1 - necessary
     #Immediately eliminate low-liquidity stocks:
-    def find_minimum_liquidity(self, company_data):
-        if company_data.volume > 30000000000:
+    def filter_minimum_liquidity(self, company_data):
+        if company_data.trading_value > 30:
             return Liquidity.Good
         return Liquidity.Weak
 
@@ -16,10 +16,10 @@ class VolumeFilter:
     #Volume increased compared to average.
     def find_smart_market(self, company_data):
         # < 1.2 is weak volume
-        if company_data.moving_average.ma20_volume / company_data.volume < 1.2:
+        if company_data.moving_average_20.ma_volume / company_data.volume < 1.2:
             return Cash_Flow.Weak
         # > 2.5 is fomo volume
-        elif company_data.moving_average.ma20_volume / company_data.volume > 2.5:
+        elif company_data.moving_average_20.ma_volume / company_data.volume > 2.5:
             return Cash_Flow.Fomo
         # 1.3 - 1.8 is smart money
         else: return Cash_Flow.Smart_Money
@@ -37,10 +37,10 @@ class VolumeFilter:
     #Filter 4 - detect
     #Increased volume – narrow price range
     #Big money doesn't want to reveal its hand.
-    def check_volume_and_price(self, company_data, volume_yesterday):
-        if company_data.volume < volume_yesterday:
+    def check_volume_and_price(self, company_data_day_current, company_data_day_before):
+        if company_data_day_current.volume < company_data_day_before.volume:
             return Volume.Money_Out
-        elif (company_data.price.close_price - company_data.price.open_price) / company_data.price.open_price < 0.03:
+        elif (company_data_day_current.price.close_price - company_data_day_current.price.open_price) / company_data_day_current.price.open_price < 0.03:
             return Volume.Money_In
 
     #Filter 5 - detect
@@ -59,14 +59,14 @@ class VolumeFilter:
     #OBV creates a higher peak
     #Do not use OBV to buy at the bottom
     def check_obv(self, company_data_day_current, company_data_day_before):
-        if company_data_day_current.on_balance_volume > company_data_day_before.on_balance_volume:
+        if company_data_day_current.On_Balance_Volume > company_data_day_before.On_Balance_Volume:
             return Volume.Money_In
         return Volume.Money_Out
 
     #Filter 7 - detect
     #The money is starting to come in.
     def check_vo(self, company_data_day_current):
-        if company_data_day_current.Volume_Oscillator > 0 and (company_data_day_current.price.close_price - company_data_day_current.price.open_price) / company_data_day_current.open_price < 0.03:
+        if company_data_day_current.Volume_Oscillator > 0 and (company_data_day_current.price.close_price - company_data_day_current.price.open_price) / company_data_day_current.price.open_price < 0.03:
             return Volume.Money_In
         return Volume.Money_Out
 
@@ -77,3 +77,4 @@ class VolumeFilter:
             return Cash_Flow.Fomo
         elif (company_data_day_current.price.close_price - company_data_day_current.price.open_price) / company_data_day_current.price.open_price < 0.015 and  company_data_day_current.Accumulation_Distribution > company_data_day_before.Accumulation_Distribution:
             return Cash_Flow.Smart_Money
+        else : return Cash_Flow.Weak

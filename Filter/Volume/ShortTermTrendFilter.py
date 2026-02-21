@@ -18,9 +18,9 @@ class ShortTermTrendFilter:
     # MA20 sloping upwards
     # MA10 ≥ MA20
     def moving_average_filter(self, company_data_current, company_data_previous):
-        if (company_data_current.price.close_price > company_data_current.MA20_price and
-            company_data_previous.moving_average.ma20_price < company_data_current.moving_average.ma20_price and
-            company_data_current.moving_average.ma10_price >= company_data_previous.moving_average.ma20_price
+        if (company_data_current.price.close_price > company_data_current.moving_average_20.ma_price and
+            company_data_previous.moving_average_20.ma_price < company_data_current.moving_average_20.ma_price and
+            company_data_current.moving_average_10.ma_price >= company_data_previous.moving_average_20.ma_price
         ):
             return Trend.Up
         return Trend.Down
@@ -46,9 +46,9 @@ class ShortTermTrendFilter:
 
     #ADX – Distinguishing between a true trend and a sideways trend
     def check_trend_or_sideways(self, company_data):
-        if company_data.ADX_14 < 20:
+        if company_data.ADX_14.ADX < 20:
             return Trend.Sideway
-        elif company_data.ADX_14 > 40:
+        elif company_data.ADX_14.ADX > 40:
             return Trend.Fomo
         else: return Trend.Good
 
@@ -58,7 +58,7 @@ class ShortTermTrendFilter:
         return Trend.Down
 
     def check_stable_uptrend(self, company_data):
-        if(company_data.MA10_price > company_data.moving_average.ma20_price and company_data.moving_average.ma20_price > company_data.moving_average.ma50_price):
+        if(company_data.moving_average_10.ma_price > company_data.moving_average_20.ma_price and company_data.moving_average_20.ma_price > company_data.moving_average_50.ma_price):
             return Trend.Up
         return Trend.Down
     # Price is far from MA20 > 7%
@@ -67,9 +67,7 @@ class ShortTermTrendFilter:
     # → Do not trade short-term (T+)
     #Filter - warning
     def check_end_trend(self, company_data):
-        if(company_data.price.close_price / company_data.moving_average.ma20_price > 0.07 and
+        if(company_data.price.close_price / company_data.moving_average_20.ma_price > 0.07 and
         company_data.RSI_14 > 70 and company_data.ADX < 40):
             return MarketState.LATE_TREND
         return MarketState.EARLY_TREND
-
-
