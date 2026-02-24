@@ -16,6 +16,9 @@ class VolumeFilter:
     #Volume increased compared to average.
     def find_smart_market(self, company_data):
         # < 1.2 is weak volume
+        if company_data.volume == 0:
+            return Cash_Flow.Weak
+
         if company_data.moving_average_20.ma_volume / company_data.volume < 1.2:
             return Cash_Flow.Weak
         # > 2.5 is fomo volume

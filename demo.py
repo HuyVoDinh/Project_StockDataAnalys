@@ -18,10 +18,10 @@ if __name__ == '__main__':
 
 
 
-    symbol = "HPG"
+    symbol = "VCB"
     stock_analyzer = StockAnalyzer(symbol)
     stock_analyzer.init_Stock()
-    stock_analyzer.update_data_frame("2025-12-01", "2026-02-10")
+    stock_analyzer.update_data_frame("2025-12-01", "2026-02-24")
     # stock_analyzer.Calculate_Trading_Value()
     stock_analyzer.update_full_indicator()
     print(stock_analyzer.data_frame)
@@ -61,48 +61,54 @@ if __name__ == '__main__':
         # compData.StdDev_20 =
         comp.company_data.append(compData)
 
+
+
     volFilter = VolumeFilter()
-    if volFilter.filter_minimum_liquidity(comp.company_data[-1]) == Liquidity.Good:
-        print(f"{comp.symbol}: has good liquidity: {comp.company_data[-1].trading_value}")
-    else:
-        print(f"{comp.symbol}: has weak liquidity: {comp.company_data[-1].trading_value}")
-
-    if volFilter.find_smart_market((comp.company_data[-1])) == Cash_Flow.Smart_Money:
-        print(f"{comp.symbol}: has Smart Money")
-    else:
-        print(f"{comp.symbol}: has not Smart Money")
-
-    if volFilter.check_gather_goods(comp.company_data[-1], comp.company_data[-2], comp.company_data[-3]) == Volume.Money_In:
-        print(f"{comp.symbol}: has Money In")
-    else:
-        print(f"{comp.symbol}: has not Money In")
-
-    print(f"{comp.symbol}: has check_volume_and_price {volFilter.check_volume_and_price(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: has check_supply_test{volFilter.check_supply_test(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: has check_obv{volFilter.check_obv(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: has check_accumulation_and_distribution{volFilter.check_accumulation_and_distribution(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: has check_vo{volFilter.check_vo(comp.company_data[-1]).name}")
+    print(f"{comp.symbol}: - VolumeFilter: has filter_minimum_liquidity: {volFilter.filter_minimum_liquidity(comp.company_data[-1]).name}")
+    print(f"{comp.symbol}: - VolumeFilter: has find_smart_market: {volFilter.find_smart_market((comp.company_data[-1])).name}")
+    print(f"{comp.symbol}: - VolumeFilter: has find_smart_market: {volFilter.check_gather_goods(comp.company_data[-1], comp.company_data[-2], comp.company_data[-3]).name}")
 
     shortTerm = ShortTermTrendFilter()
     print(f"{comp.symbol}: - Short-term: has moving_average_filter: {shortTerm.moving_average_filter(comp.company_data[-1], comp.company_data[-2]).name}")
     print(f"{comp.symbol}: - Short-term: has RSI_momentum_confirmation: {shortTerm.RSI_momentum_confirmation(comp.company_data[-1]).name}")
     print(f"{comp.symbol}: - Short-term: has check_incoming_momentum: {shortTerm.check_incoming_momentum(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: - Short-term: has check_trend_or_sideways: {shortTerm.check_trend_or_sideways(comp.company_data[-1]).name}")
-    print(f"{comp.symbol}: - Short-term: has price_action_confirms_trend: {shortTerm.price_action_confirms_trend(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: - Short-term: has check_stable_uptrend: {shortTerm.check_stable_uptrend(comp.company_data[-1]).name}")
-    print(f"{comp.symbol}: - Short-term: has check_end_trend: {shortTerm.check_end_trend(comp.company_data[-1]).name}")
 
     volatility = VolatilityFilter()
     print(f"{comp.symbol}: - VolatilityFilter: has daily_candlestick_range: {volatility.daily_candlestick_range(comp.company_data[-1]).name}")
     print(f"{comp.symbol}: - VolatilityFilter: has candlestick_range: {volatility.candlestick_range(comp.company_data[-1]).name}")
     print(f"{comp.symbol}: - VolatilityFilter: has atr_filter: {volatility.atr_filter(comp.company_data[-1]).name}")
-    print(f"{comp.symbol}: - VolatilityFilter: has bandwidth_filter: {volatility.bandwidth_filter(comp.company_data[-1]).name}")
-    print(f"{comp.symbol}: - VolatilityFilter: has bandwidth_filter2: {volatility.bandwidth_filter2(comp.company_data[-1]).name}")
-    print(f"{comp.symbol}: - VolatilityFilter: has donchian_channel_filter: {volatility.donchian_channel_filter(comp.company_data[-1]).name}")
 
     timingFilter = TimingFilter()
     print(f"{comp.symbol}: - timingFilter: has setup_retest: {timingFilter.setup_retest(comp.company_data[-1], comp.company_data[-2]).name}")
     print(f"{comp.symbol}: - timingFilter: has getting_back_on_track_for_recovery: {timingFilter.getting_back_on_track_for_recovery(comp.company_data[-1], comp.company_data[-2]).name}")
     print(f"{comp.symbol}: - timingFilter: has confirm_entry_point: {timingFilter.confirm_entry_point(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: - timingFilter: has setup_middle_bands: {timingFilter.setup_middle_bands(comp.company_data[-1], comp.company_data[-2]).name}")
-    print(f"{comp.symbol}: - timingFilter: has setup_middle_bands: {timingFilter.setup_MACD(comp.company_data[-1]).name}")
+
+    # print(f"{comp.symbol}: has check_volume_and_price {volFilter.check_volume_and_price(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: has check_supply_test{volFilter.check_supply_test(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: has check_obv{volFilter.check_obv(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: has check_accumulation_and_distribution{volFilter.check_accumulation_and_distribution(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: has check_vo{volFilter.check_vo(comp.company_data[-1]).name}")
+    #
+    # shortTerm = ShortTermTrendFilter()
+    # print(f"{comp.symbol}: - Short-term: has moving_average_filter: {shortTerm.moving_average_filter(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: - Short-term: has RSI_momentum_confirmation: {shortTerm.RSI_momentum_confirmation(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - Short-term: has check_incoming_momentum: {shortTerm.check_incoming_momentum(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: - Short-term: has check_trend_or_sideways: {shortTerm.check_trend_or_sideways(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - Short-term: has price_action_confirms_trend: {shortTerm.price_action_confirms_trend(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: - Short-term: has check_stable_uptrend: {shortTerm.check_stable_uptrend(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - Short-term: has check_end_trend: {shortTerm.check_end_trend(comp.company_data[-1]).name}")
+    #
+    # volatility = VolatilityFilter()
+    # print(f"{comp.symbol}: - VolatilityFilter: has daily_candlestick_range: {volatility.daily_candlestick_range(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - VolatilityFilter: has candlestick_range: {volatility.candlestick_range(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - VolatilityFilter: has atr_filter: {volatility.atr_filter(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - VolatilityFilter: has bandwidth_filter: {volatility.bandwidth_filter(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - VolatilityFilter: has bandwidth_filter2: {volatility.bandwidth_filter2(comp.company_data[-1]).name}")
+    # print(f"{comp.symbol}: - VolatilityFilter: has donchian_channel_filter: {volatility.donchian_channel_filter(comp.company_data[-1]).name}")
+    #
+    # timingFilter = TimingFilter()
+    # print(f"{comp.symbol}: - timingFilter: has setup_retest: {timingFilter.setup_retest(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: - timingFilter: has getting_back_on_track_for_recovery: {timingFilter.getting_back_on_track_for_recovery(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: - timingFilter: has confirm_entry_point: {timingFilter.confirm_entry_point(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: - timingFilter: has setup_middle_bands: {timingFilter.setup_middle_bands(comp.company_data[-1], comp.company_data[-2]).name}")
+    # print(f"{comp.symbol}: - timingFilter: has setup_middle_bands: {timingFilter.setup_MACD(comp.company_data[-1]).name}")

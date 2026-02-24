@@ -30,7 +30,11 @@ class StockAnalyzer:
         if self.stock is None:
             print("Stock is not initialized.")
             self.init_Stock()
-        self.data_frame = self.stock.quote.history(start=start, end=end)
+        try:
+            self.data_frame = self.stock.quote.history(start=start, end=end)
+        except:
+            self.data_frame = None
+
 
     def get_history_price(self, symbol: str, length: str, interval: str):
         if self.quote is None:
