@@ -3,18 +3,49 @@ from time import sleep
 from Enum.liquidity import Liquidity, Cash_Flow, Volume
 from Enum.signal import Emplitude
 from Enum.trend import Trend, Momentum
-from Filter.Volume.ShortTermTrendFilter import ShortTermTrendFilter
-from Filter.Volume.TimingFilter import TimingFilter
-from Filter.Volume.VolatilityFilter import VolatilityFilter
+from Filter.ShortTerm.ShortTermTrendFilter import ShortTermTrendFilter
+from Filter.Timing.TimingFilter import TimingFilter
+from Filter.Volatility.VolatilityFilter import VolatilityFilter
 from Filter.Volume.VolumeFilter import VolumeFilter
-from Model.Indicator import Price
-from StockData import stock_data
 from Model.Company import Company, CompanyData
+from Setup.setup import *
 from StockData.stock_analyzer import StockAnalyzer
 from StockData.stock_data import StockData
+from Setup import *
+import pandas as pd
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    # Init save data
+    ##############  Volume  ######################
+    vol_symbol_list_1 = []
+    vol_symbol_list_2 = []
+    vol_symbol_list_3 = []
+    vol_symbol_list_4 = []
+    vol_symbol_list_5 = []
+    vol_symbol_list_6 = []
+    vol_symbol_list_7 = []
+    vol_symbol_list_8 = []
+    ##############  Volatility  ######################
+    vola_symbol_list_1 = []
+    vola_symbol_list_2 = []
+    vola_symbol_list_3 = []
+    vola_symbol_list_4 = []
+    vola_symbol_list_5 = []
+    ##############  Timing  ######################
+    timing_symbol_list_1 = []
+    timing_symbol_list_2 = []
+    timing_symbol_list_3 = []
+    timing_symbol_list_4 = []
+    timing_symbol_list_5 = []
+    ##############  ShortTerm  ######################
+    short_symbol_list_1 = []
+    short_symbol_list_2 = []
+    short_symbol_list_3 = []
+    short_symbol_list_4 = []
+    short_symbol_list_5 = []
+    short_symbol_list_6 = []
+    #####################################################################
     stock_data = StockData()
     stock_data.init_listing()
     symbol_list = stock_data.listing_information_all_symbols()
@@ -23,12 +54,6 @@ if __name__ == '__main__':
     counter = 1
 
     for symbol in symbol_list['symbol']:
-        #Setup filter - remove symbol is less than 30B
-        # stock_analyzer = StockAnalyzer(symbol)
-        # stock_analyzer.init_Stock()
-        # stock_analyzer.update_data_frame("2025-12-01", "2026-02-10")
-        # trading_value = stock_analyzer.Calculate_Trading_Value()
-
         if counter == 19:
             counter = 1
             sleep(60)
@@ -37,7 +62,7 @@ if __name__ == '__main__':
 
         stock_analyzer = StockAnalyzer(symbol)
         stock_analyzer.init_Stock()
-        stock_analyzer.update_data_frame("2025-12-01", "2026-02-24")
+        stock_analyzer.update_data_frame("2025-12-01", "2026-02-25")
 
         if stock_analyzer.data_frame is None:
             continue
@@ -81,24 +106,20 @@ if __name__ == '__main__':
             # compData.StdDev_20 =
             comp.company_data.append(compData)
 
-        volFilter = VolumeFilter()
-        shortTerm = ShortTermTrendFilter()
-        volatility = VolatilityFilter()
-        timingFilter = TimingFilter()
-        liquidity = volFilter.filter_minimum_liquidity(comp.company_data[-1])
-        smart_market = volFilter.find_smart_market((comp.company_data[-1]))
-        gather = volFilter.check_gather_goods(comp.company_data[-1], comp.company_data[-2], comp.company_data[-3])
-        ma_signal = shortTerm.moving_average_filter(comp.company_data[-1], comp.company_data[-2])
-        rsi_signal = shortTerm.RSI_momentum_confirmation(comp.company_data[-1])
-        momentum = shortTerm.check_incoming_momentum(comp.company_data[-1], comp.company_data[-2])
-        daily_candlestick_range = volatility.daily_candlestick_range(comp.company_data[-1])
-        # candlestick_range = volatility.candlestick_range(comp.company_data[-1])
-        atr_signal = volatility.atr_filter(comp.company_data[-1])
-        # retest = timingFilter.setup_retest(comp.company_data[-1], comp.company_data[-2])
-        # recovery = timingFilter.getting_back_on_track_for_recovery(comp.company_data[-1], comp.company_data[-2])
-        # entry_point = timingFilter.confirm_entry_point(comp.company_data[-1], comp.company_data[-2])
-        if liquidity == Liquidity.Good and smart_market == Cash_Flow.Smart_Money and gather == Volume.Money_In and ma_signal == Trend.Up and rsi_signal == Trend.Good and momentum == Momentum.In and daily_candlestick_range == Emplitude.Good and atr_signal == Emplitude.Good:
-            print(f"{symbol} is good")
-            sleep(1000)
-        else:
-            print(f"{symbol} is bad")
+        print(comp.symbol)
+
+        if volume_filter_single_indicator_1(comp) is not None:
+            vol_symbol_list_1.append(comp.symbol)
+
+        if volume_filter_single_indicator_2(comp) is not None:
+            vol_symbol_list_2.append(comp.symbol)
+
+        if len(vol_symbol_list_1) == 2 or len(vol_symbol_list_2) == 2:
+            break
+
+    ####### Export data
+    result_data = pd.DataFrame(vol_symbol_list_1, columns=['vol_symbol_list_1'])
+    result_data.to_csv("""D:/Project/Project_StockDataAnalys/data.csv""", index=False)
+
+    result_data = pd.DataFrame(vol_symbol_list_2, columns=['vol_symbol_list_2'])
+    result_data.to_csv("""D:/Project/Project_StockDataAnalys/data.csv""", index=False)
