@@ -59,7 +59,7 @@ def volume_filter_single_indicator_7(comp):
 
 def volume_filter_single_indicator_8(comp):
     volFilter = VolumeFilter()
-    accum = volFilter.check_accumulation_and_distribution(comp.company_data[-1])
+    accum = volFilter.check_accumulation_and_distribution(comp.company_data[-1], comp.company_data[-2])
     if accum == Volume.Money_In:
         return comp.symbol
     return None
@@ -181,3 +181,4 @@ def short_filter_single_indicator_6(comp):
     if result == MarketState.EARLY_TREND:
         return comp.symbol
     return None
+

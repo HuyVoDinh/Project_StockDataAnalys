@@ -67,7 +67,9 @@ class ShortTermTrendFilter:
     # → Do not trade short-term (T+)
     #Filter - warning
     def check_end_trend(self, company_data):
+        if company_data.moving_average_20.ma_price == 0:
+            return None
         if(company_data.price.close_price / company_data.moving_average_20.ma_price > 0.07 and
-        company_data.RSI_14 > 70 and company_data.ADX < 40):
+        company_data.RSI_14 > 70 and company_data.ADX_14.ADX < 40):
             return MarketState.LATE_TREND
         return MarketState.EARLY_TREND

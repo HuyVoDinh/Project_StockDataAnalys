@@ -8,7 +8,7 @@ from Filter.Timing.TimingFilter import TimingFilter
 from Filter.Volatility.VolatilityFilter import VolatilityFilter
 from Filter.Volume.VolumeFilter import VolumeFilter
 from Model.Company import Company, CompanyData
-from Setup.setup import *
+from Setup.setup_single_indicator_1 import *
 from StockData.stock_analyzer import StockAnalyzer
 from StockData.stock_data import StockData
 from Setup import *
