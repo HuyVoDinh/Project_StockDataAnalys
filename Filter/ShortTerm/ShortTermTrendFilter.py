@@ -17,7 +17,7 @@ class ShortTermTrendFilter:
     # Close > MA20
     # MA20 sloping upwards
     # MA10 ≥ MA20
-    def moving_average_filter(self, company_data_current, company_data_previous):
+    def  moving_average_filter(self, company_data_current, company_data_previous):
         if (company_data_current.price.close_price > company_data_current.moving_average_20.ma_price and
             company_data_previous.moving_average_20.ma_price < company_data_current.moving_average_20.ma_price and
             company_data_current.moving_average_10.ma_price >= company_data_previous.moving_average_20.ma_price
