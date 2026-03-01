@@ -35,15 +35,15 @@ if __name__ == '__main__':
             sleep(60)
         else:
             counter += 1
-
-        stock_analyzer = StockAnalyzer(symbol)
-        stock_analyzer.init_Stock()
-        stock_analyzer.update_data_frame("2025-12-01", "2026-02-25")
-
-        if stock_analyzer.data_frame is None:
-            continue
-
         try:
+            stock_analyzer = StockAnalyzer(symbol)
+            stock_analyzer.init_Stock()
+            stock_analyzer.update_data_frame("2025-12-01", "2026-02-25")
+
+            if stock_analyzer.data_frame is None:
+                continue
+
+
             stock_analyzer.Calculate_Trading_Value()
             stock_analyzer.update_full_indicator()
             # print(stock_analyzer.data_frame)
@@ -99,11 +99,11 @@ if __name__ == '__main__':
         if setup_4(comp) is not None:
             symbol_list_4.append(comp.symbol)
 
-    ####### Export data
-    df1 = pd.DataFrame(setup_1, columns=['setup_1'])
-    df2 = pd.DataFrame(setup_2, columns=['setup_2'])
-    df3 = pd.DataFrame(setup_3, columns=['setup_3'])
-    df4 = pd.DataFrame(setup_4, columns=['setup_4'])
+    ####### Export dataf
+    df1 = pd.DataFrame(symbol_list_1, columns=['setup_1'])
+    df2 = pd.DataFrame(symbol_list_2, columns=['setup_2'])
+    df3 = pd.DataFrame(symbol_list_3, columns=['setup_3'])
+    df4 = pd.DataFrame(symbol_list_4, columns=['setup_4'])
 
     result_data = pd.concat([df1, df2,df3,df4], axis=1)
     result_data.to_csv("""D:/Project/Project_StockDataAnalys/data.csv""", index=False)
