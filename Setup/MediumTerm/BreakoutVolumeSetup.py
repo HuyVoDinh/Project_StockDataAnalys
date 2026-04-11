@@ -21,7 +21,7 @@ def breakout_volume_setup(comp):
     volatility = VolatilityFilter()
 
     # Find 20 day high
-    high20 = max(data for data in comp.company_data[-20:])
+    high20 = max(data.price.close_price for data in comp.company_data[-20:])
 
     # Breakout
     breakout = comp.company_data[-1].price.close_price > high20
@@ -33,7 +33,7 @@ def breakout_volume_setup(comp):
     rsi_momentum = comp.company_data[-1].RSI_14 > 60
 
     # Trend strength
-    adx_strong = comp.company_data[-1].ADX_14 > 30
+    adx_strong = comp.company_data[-1].ADX_14.ADX > 30
 
     if breakout and volume_confirmation and rsi_momentum and adx_strong:
         return comp.symbol

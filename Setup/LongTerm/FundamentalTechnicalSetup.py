@@ -23,7 +23,7 @@ def fundamental_technical_setup(comp):
     volatility = VolatilityFilter()
 
     #Technical condition
-    price_above_ma50 = comp.company_data[-1].price.close_price > comp.company_data[-1].price_above_ma50.ma_price
+    price_above_ma50 = comp.company_data[-1].price.close_price > comp.company_data[-1].moving_average_50.ma_price
     volume_stable = volume.find_smart_market(comp.company_data[-1]) in [Cash_Flow.Smart_Money, Cash_Flow.Weak]
     rsi_neutral = 40 <= comp.company_data[-1].RSI_14 <= 60
     uptrend = shortTerm.moving_average_filter(comp.company_data[-1], comp.company_data[-2]) in [Trend.Up, Trend.Down]

@@ -50,7 +50,7 @@ def get_current_prices(symbols):
     """Get current prices for symbols (simplified with dummy prices)"""
     # In a real implementation, you would get actual current prices
     # For now, using dummy prices
-    prices = []
+    prices = {}
     for symbol in symbols:
         # Using a dummy price of 100,000 for all symbols
         prices[symbol] = 100000

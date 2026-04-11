@@ -1,10 +1,11 @@
 import pandas as pd
 
-vol_symbol_list_1 = ['HPG', 'NVL']
-vol_symbol_list_2 = ['ASD', 'TCB']
+from StockData import stock_data
+from StockData.stock_data import StockData
 
-df1 = pd.DataFrame(vol_symbol_list_1, columns=['vol_symbol_list_1'])
-df2 = pd.DataFrame(vol_symbol_list_2, columns=['vol_symbol_list_2'])
-
-result_data = pd.concat([df1, df2], axis=1)
-result_data.to_csv("D:/Project/Project_StockDataAnalys/data.csv", index=False)
+stock_data = StockData()
+stock_data.init_listing()
+symbol_list = stock_data.listing_information_by_group()
+for symbol in symbol_list['symbol']:
+    print(symbol)
+print(len(symbol_list))

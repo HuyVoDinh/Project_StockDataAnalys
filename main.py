@@ -1,17 +1,9 @@
 import os.path
 import pickle
+import subprocess
 import sys
 from time import sleep
 
-from vnai.beam.metrics import capture
-
-from Enum.liquidity import Liquidity, Cash_Flow, Volume
-from Enum.signal import Emplitude
-from Enum.trend import Trend, Momentum
-from Filter.ShortTerm.ShortTermTrendFilter import ShortTermTrendFilter
-from Filter.Timing.TimingFilter import TimingFilter
-from Filter.Volatility.VolatilityFilter import VolatilityFilter
-from Filter.Volume.VolumeFilter import VolumeFilter
 from Setup.ShortTerm.AbsorptionSetup import absorption_setup
 from Setup.ShortTerm.Ma20RetestSetup import ma20_retest_setup
 from Setup.ShortTerm.BBSqueezeSetup import bb_squeeze_setup
@@ -27,6 +19,9 @@ from Model.Company import Company, CompanyData
 from StockData.stock_analyzer import StockAnalyzer
 from StockData.stock_data import StockData
 import pandas as pd
+from vnstock import register_user
+
+isRegistered = False
 
 def process_all_symbols():
     # Init save data
@@ -45,21 +40,22 @@ def process_all_symbols():
 
     stock_data = StockData()
     stock_data.init_listing()
+    # symbol_list = stock_data.listing_information_by_group("VN100")
     symbol_list = stock_data.listing_information_all_symbols()
     # symbol_list = stock_data.listing_information_by_exchange("HNX")
-    company_data = []
+    company_data = {}
     counter = 1
 
     for symbol in symbol_list['symbol']:
-        if counter == 19:
-            counter = 1
-            sleep(60)
-        else:
-            counter += 1
+        # if counter == 19:
+        #     counter = 1
+        #     sleep(60)
+        # else:
+        #     counter += 1
         try:
             stock_analyzer = StockAnalyzer(symbol)
             stock_analyzer.init_Stock()
-            stock_analyzer.update_data_frame("2025-12-01", "2026-02-25")
+            stock_analyzer.update_data_frame("2026-03-01", "2026-04-11")
 
             if stock_analyzer.data_frame is None:
                 continue
@@ -103,11 +99,11 @@ def process_all_symbols():
                 compData.MACD.histogram = row['macd_hist']
                 # compData.StdDev_20 =
                 comp.company_data.append(compData)
-
             # Store company data
             company_data[symbol] = comp
-        except:
-            print(comp.symbol + "can't check")
+        except Exception as e:
+            print(comp.symbol + " can't check")
+            print(f"Reason: {e}")
             continue
 
         if ma20_retest_setup(comp) is not None:
@@ -148,13 +144,13 @@ def process_all_symbols():
     df2 = pd.DataFrame(symbol_list_2, columns=['absorption_setup'])
     df3 = pd.DataFrame(symbol_list_3, columns=['bb_squeeze_setup'])
     df4 = pd.DataFrame(symbol_list_4, columns=['volume_spike_setup'])
-    df5 = pd.DataFrame(symbol_list_4, columns=['macd_divergence_setup'])
-    df6 = pd.DataFrame(symbol_list_4, columns=['rsi_reversal_setup'])
-    df7 = pd.DataFrame(symbol_list_4, columns=['ma50_support_setup'])
-    df8 = pd.DataFrame(symbol_list_4, columns=['multi_timeframe_trend_setup'])
-    df9 = pd.DataFrame(symbol_list_4, columns=['breakout_volume_setup'])
-    df10 = pd.DataFrame(symbol_list_4, columns=['long_trend_following_setup'])
-    df11 = pd.DataFrame(symbol_list_4, columns=['fundamental_technical_setup'])
+    df5 = pd.DataFrame(symbol_list_5, columns=['macd_divergence_setup'])
+    df6 = pd.DataFrame(symbol_list_6, columns=['rsi_reversal_setup'])
+    df7 = pd.DataFrame(symbol_list_7, columns=['ma50_support_setup'])
+    df8 = pd.DataFrame(symbol_list_8, columns=['multi_timeframe_trend_setup'])
+    df9 = pd.DataFrame(symbol_list_9, columns=['breakout_volume_setup'])
+    df10 = pd.DataFrame(symbol_list_10, columns=['long_trend_following_setup'])
+    df11 = pd.DataFrame(symbol_list_11, columns=['fundamental_technical_setup'])
 
     result_data = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11], axis=1)
 
@@ -225,40 +221,40 @@ def run_trading_system():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Check if data.csv existws
-    csv_file_path = "data.csv"
+    key_path = "Secret/apikey.txt"
+    if os.path.exists(key_path):
+        register_user(key_path)
+        csv_file_path = "data.csv"
 
-    if not os.path.exists(csv_file_path):
-        print("No existing csv file found. Processing all symbols and creating new data.csv...")
-        # Process all symbols and save to CSV
-        result_data, company_data = process_all_symbols()
-        result_data.to_csv(csv_file_path, index=False)
-        print("Processing complete. Data saved to data.csv")
-    else:
-        print("Existing CSV file found. Loading input data...")
-        # Load existing data
-        input_data = pd.read_csv(csv_file_path)
+        if not os.path.exists(csv_file_path):
+            print("No existing csv file found. Processing all symbols and creating new data.csv...")
+            # Process all symbols and save to CSV
+            result_data, company_data = process_all_symbols()
+            result_data.to_csv(csv_file_path, index=False)
+            print("Processing complete. Data saved to data.csv")
+        else:
+            print("Existing CSV file found. Loading input data...")
+            # Load existing data
+            input_data = pd.read_csv(csv_file_path)
 
-        print("Processing all symbols to find potential opportunities...")
-        # processs all symbols to get current results
-        output_data, company_data = process_all_symbols()
+            print("Processing all symbols to find potential opportunities...")
+            # processs all symbols to get current results
+            output_data, company_data = process_all_symbols()
 
-        # Save current results for next day use
-        output_data.to_csv("data_current", index=False)
+            # Save current results for next day use
+            output_data.to_csv("data_current", index=False)
 
-        # Compare results
-        available, unavailable, potential = compare_result(input_data, output_data)
+            # Compare results
+            available, unavailable, potential = compare_result(input_data, output_data)
 
-        # write comparision report
-        write_comparison_report(available, unavailable, potential)
+            # write comparision report
+            write_comparison_report(available, unavailable, potential)
 
-        print("Analysis complete.")
-        print(f"- Available symbols: {len(available)}")
-        print(f"- Unavailable symbols: {len(unavailable)}")
-        print(f"- Potential symbols: {len(potential)}")
-        print("Detailed report saved to comparison_report.txt")
-        print("Current data saved to data_current.csv for next day use")
+            print("Analysis complete.")
+            print(f"- Available symbols: {len(available)}")
+            print(f"- Unavailable symbols: {len(unavailable)}")
+            print(f"- Potential symbols: {len(potential)}")
+            print("Detailed report saved to comparison_report.txt")
+            print("Current data saved to data_current.csv for next day use")
 
-    run_trading_system()
-
-
-    result_data.to_csv("""D:/Project/Project_StockDataAnalys/data.csv""", index=False)
+        run_trading_system()
