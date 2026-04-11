@@ -9,7 +9,7 @@ class Strategy4(Strategy):
         # Balanced approach, 10 maximum positions
         super().__init__("Strategy4_MA20_BB_MACD", max_position=10, risk_per_trade=0.01)
 
-    def initialize(self,data):
+    def identify_symbols(self,data):
         """Identify symbols using MA20 Retest, Bollinger Band Squeeze, and MACD Divergence setups"""
         symbols = []
 

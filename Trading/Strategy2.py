@@ -8,7 +8,7 @@ class Strategy2(Strategy):
     def __init__(self):
         # Absorption and Bollinger Band Squeeze strategy
         # Conservative approach, 6 maximum position, lower risk per trade
-        super().__init__("Strategy2_Absorption_BBSqueeze", maximum=6, risk_per_trade=0.05)
+        super().__init__("Strategy2_Absorption_BBSqueeze", max_position=6, risk_per_trade=0.05)
 
     def identify_symbols(self, data):
         """Identify symbols using Absorption and Bollinger Band Squeeze setups"""

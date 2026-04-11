@@ -133,7 +133,7 @@ class Strategy(ABC):
 
                         if quantity > 0:
                             print(f"[{self.name}] Buying {quantity} shares of {symbol} at {current_price:,.0f} VND (Stop: {stop_loss:,.0f}) VND")
-                            self.portfolio.buy(symbol, quantity)
+                            self.portfolio.buy(symbol, current_price, quantity)
                         else:
                             print(f"[{self.name}] Skipping {symbol} - insufficient funds or invalid quantity")
 
