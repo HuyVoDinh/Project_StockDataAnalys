@@ -55,7 +55,7 @@ def process_all_symbols():
         try:
             stock_analyzer = StockAnalyzer(symbol)
             stock_analyzer.init_Stock()
-            stock_analyzer.update_data_frame("2026-03-01", "2026-04-11")
+            stock_analyzer.update_data_frame("2026-03-01", "2026-04-14")
 
             if stock_analyzer.data_frame is None:
                 continue

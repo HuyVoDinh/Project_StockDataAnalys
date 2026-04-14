@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime
 import os
+import json
 
 class Portfolio:
     def __init__(self, name, initial_cash = 1000000000):
@@ -8,52 +9,58 @@ class Portfolio:
         self.cash = initial_cash
         self.position = {} #Symbol{'quantity': int, 'purchase_price': float}
         self.trade_history = [] # List of trades
-        self.portfolio_file = f"Trading/{name}_portfolio.csv"
+        self.portfolio_file = f"Trading/{name}_portfolio.json"
         self.history_file = f"Trading/{name}_history.csv"
         self.load_portfolio()
 
     def load_portfolio(self):
-        """Load existing portfolio data if available"""
+        """Load portfolio from JSON file"""
         if os.path.exists(self.portfolio_file):
-            portfolio_data = pd.read_csv(self.portfolio_file)
-            for _, row in portfolio_data.iterrows():
-                self.position[row['symbol']] = {
-                    'quantity': row['quantity'],
-                    'purchase_price': row['purchase_price'],
-                }
+            try:
+                with open(self.portfolio_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    self.cash = data.get('cash', self.cash)
+                    self.position = data.get('position', {})
+            except Exception as e:
+                print(f"Error loading portfolio: {e}")
+                # Initialize with default values if there's an error
+                self.cash = 1000000000
+                self.position = {}
+        # If no portfoolio file exists, it will be created when save_portfolio
 
+        # Load trade history from CSV file
         if os.path.exists(self.history_file):
-            history_data = pd.read_csv(self.history_file)
-            for _, row in history_data.iterrows():
-                self.trade_history.append({
-                    'data': row['data'],
-                    'symbol': row['symbol'],
-                    'action': row['action'],
-                    'price': row['price'],
-                    'quantity': row['quantity'],
-                    'cash_change': row['cash_change']
-                })
+            try:
+                history_data = pd.read_csv(self.history_file)
+                for _, row in history_data.iterrows():
+                    self.trade_history.append({
+                        'data': row['data'],
+                        'symbol': row['symbol'],
+                        'action': row['action'],
+                        'price': row['price'],
+                        'quantity': row['quantity'],
+                        'cash_change': row['cash_change']
+                    })
+            except Exception as e:
+                print(f"Error loading history: {e}")
+                # Initialize with empty history if there's an error
+                self.history = []
 
             #Update cash balance based on trade history
             total_cash_change = sum(t['cash_change'] for t in self.trade_history)
             self.cash += total_cash_change + 1000000000 #Initial cash + net cash changes
 
     def save_portfolio(self):
-        """Save current position"""
-        portfolio_data = []
-        for symbol, position in self.position.items():
-            portfolio_data.append({
-                'symbol': symbol,
-                'quantity': position['quantity'],
-                'purchase_price': position['purchase_price'],
-            })
-
-        df_portfolio = pd.DataFrame(portfolio_data)
-        df_portfolio.to_csv(self.portfolio_file, index=False)
-
-        # Save trade history
-        df_history = pd.DataFrame(self.trade_history)
-        df_history.to_csv(self.history_file, index=False)
+        """Save current position to JSON file"""
+        try:
+            data = {
+                'cash': self.cash,
+                'position': self.position,
+            }
+            with open(self.portfolio_file, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except Exception as e:
+            print(f"Error saving portfolio: {e}")
 
     def buy(self, symbol, price, quantity):
         """Buy a stock"""
@@ -64,7 +71,7 @@ class Portfolio:
                 # Average down/up
                 total_quantity = self.position[symbol]['quantity'] + quantity
                 total_cost = (self.position[symbol]['quantity'] * self.position[symbol]['purchase_price']) + (price * quantity)
-                avg_price = total_cost / total_quantity
+                avg_price = total_cost / total_quantity if total_quantity > 0 else price
                 self.position[symbol]['quantity'] = total_quantity
                 self.position[symbol]['purchase_price'] = avg_price
             else:
