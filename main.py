@@ -20,6 +20,7 @@ from StockData.stock_analyzer import StockAnalyzer
 from StockData.stock_data import StockData
 import pandas as pd
 from vnstock import register_user
+from Filter.Volume.MarketCapVolumeFilter import filter_stocks_by_market_cap_and_volume, get_filtered_symbols
 
 isRegistered = False
 
@@ -43,15 +44,20 @@ def process_all_symbols():
     # symbol_list = stock_data.listing_information_by_group("VN100")
     symbol_list = stock_data.listing_information_all_symbols()
     # symbol_list = stock_data.listing_information_by_exchange("HNX")
+    filter_symbol_list = {}
+    if not os.path.exists('filtered_stocks'):
+        print("filtered_stocks is not exists")
+        filter_symbol_list = filter_stocks_by_market_cap_and_volume(symbol_list)
+        if filter_symbol_list is not None:
+            print("Successfully filtered stocks data")
+        else:
+            print("Failed to filter stocks data")
+    else:
+        print("Filtered stocks data already exists. Load symbols")
+        filter_symbol_list = get_filtered_symbols()
     company_data = {}
-    counter = 1
 
-    for symbol in symbol_list['symbol']:
-        # if counter == 19:
-        #     counter = 1
-        #     sleep(60)
-        # else:
-        #     counter += 1
+    for symbol in filter_symbol_list:
         try:
             stock_analyzer = StockAnalyzer(symbol)
             stock_analyzer.init_Stock()

@@ -20,7 +20,7 @@ class Portfolio:
                 with open(self.portfolio_file, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     self.cash = data.get('cash', self.cash)
-                    self.position = data.get('position', {})
+                    self.position = data.get('positions', {})
             except Exception as e:
                 print(f"Error loading portfolio: {e}")
                 # Initialize with default values if there's an error
@@ -44,7 +44,7 @@ class Portfolio:
             except Exception as e:
                 print(f"Error loading history: {e}")
                 # Initialize with empty history if there's an error
-                self.history = []
+                self.trade_history = []
 
             #Update cash balance based on trade history
             total_cash_change = sum(t['cash_change'] for t in self.trade_history)
@@ -52,10 +52,11 @@ class Portfolio:
 
     def save_portfolio(self):
         """Save current position to JSON file"""
+        os.makedirs(os.path.dirname(self.portfolio_file), exist_ok=True)
         try:
             data = {
                 'cash': self.cash,
-                'position': self.position,
+                'positions': self.position,
             }
             with open(self.portfolio_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)

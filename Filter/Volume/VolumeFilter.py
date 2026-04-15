@@ -7,8 +7,8 @@ class VolumeFilter:
 
     #Filter 1 - necessary
     #Immediately eliminate low-liquidity stocks:
-    def filter_minimum_liquidity(self, company_data):
-        if company_data.trading_value > 30:
+    def filter_minimum_liquidity(self, company_data, minimum_liquidity = 30):
+        if company_data.trading_value > minimum_liquidity:
             return Liquidity.Good
         return Liquidity.Weak
 
