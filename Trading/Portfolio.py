@@ -22,7 +22,7 @@ class Portfolio:
                     self.cash = data.get('cash', self.cash)
                     self.position = data.get('positions', {})
             except Exception as e:
-                print(f"Error loading portfolio: {e}")
+                print(f"[Portfolio][load_portfolio] Error loading portfolio: {e}")
                 # Initialize with default values if there's an error
                 self.cash = 1000000000
                 self.position = {}
@@ -42,7 +42,7 @@ class Portfolio:
                         'cash_change': row['cash_change']
                     })
             except Exception as e:
-                print(f"Error loading history: {e}")
+                print(f"[Portfolio][load_portfolio] Error loading history: {e}")
                 # Initialize with empty history if there's an error
                 self.trade_history = []
 
@@ -61,7 +61,7 @@ class Portfolio:
             with open(self.portfolio_file, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=False, indent=4)
         except Exception as e:
-            print(f"Error saving portfolio: {e}")
+            print(f"[Portfolio][save_portfolio] Error saving portfolio: {e}")
 
     def buy(self, symbol, price, quantity):
         """Buy a stock"""

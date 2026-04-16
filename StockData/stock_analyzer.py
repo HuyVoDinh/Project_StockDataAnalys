@@ -7,7 +7,7 @@ from Model.Indicator import Price, MovingAverage, BollingerBands, DonchianChanne
 from vnstock import Vnstock
 
 class StockAnalyzer:
-    def __init__(self, symbol: str, source="VCI"):
+    def __init__(self, symbol: str, source="KBS"):
         self.symbol = symbol
         self.source = source
         self.quote = None

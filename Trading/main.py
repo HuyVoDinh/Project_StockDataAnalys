@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import sys
 import pickle
+
+from Trading.Demo import Demo
 from Trading.Strategy1 import Strategy1
 from Trading.Strategy2 import Strategy2
 from Trading.Strategy3 import Strategy3
@@ -20,10 +22,10 @@ def load_current_data():
             df = pd.read_csv(data_file)
             return df
         else:
-            print("No data file found. Please run main.py firest to generate data.")
+            print("[Trading][load_current_data] No data file found. Please run main.py firest to generate data.")
             return  None
     except Exception as e:
-        print(f"Error loading data: {e}")
+        print(f"[Trading][load_current_data] Error loading data: {e}")
         return None
 
 def load_company_data():
@@ -34,10 +36,10 @@ def load_company_data():
             with open("company_data.pkl", "rb") as f:
                 return pickle.load(f)
         else:
-            print("No company data file found")
+            print("[Trading][load_company_data] No company data file found")
             return {}
     except Exception as e:
-        print(f"Error loading company data: {e}")
+        print(f"[Trading][load_company_data] Error loading company data: {e}")
 
 def get_all_symbols(data_df):
     """Extract all symbols from the data frame"""
@@ -57,22 +59,22 @@ def get_current_prices(symbols):
     return prices
 
 def main():
-    print("Loading current data...")
+    print("[Trading][main] Loading current data...")
     data_df = load_current_data()
 
     if data_df is None:
         return
 
-    print("Data loaded successfully")
+    print("[Trading][main] Data loaded successfully")
 
     # Load company data
-    print("Loading company data...")
+    print("[Trading][main] Loading company data...")
     company_data = load_company_data()
-    print(f"Loaded company data for {len(company_data)} symbols")
+    print(f"[Trading][main] Loaded company data for {len(company_data)} symbols")
 
     # Get all symbols
     symbols = get_all_symbols(data_df)
-    print(f"Found {len(symbols)} symbols in the data")
+    print(f"[Trading][main] Found {len(symbols)} symbols in the data")
 
     # Get current prices (simplified)
     current_prices = get_current_prices(symbols)
@@ -84,6 +86,7 @@ def main():
         Strategy3(),
         Strategy4(),
         Strategy5(),
+        Demo(),
     ]
 
     # Prepare data for strategies
@@ -94,7 +97,7 @@ def main():
 
     # Execute each strategies
     for i, strategy in enumerate(strategies, 1):
-        print(f"\nExecuting {strategy.name}...")
+        print(f"\n[Trading][main] Executing {strategy.name}...")
         strategy.execute_trades(data, current_prices)
 
         # Generate report
@@ -106,9 +109,9 @@ def main():
         with open(report_file, "w", encoding='utf-8') as f:
             f.write(report)
 
-        print(f"Report save to {report_file}")
+        print(f"[Trading][main] Report save to {report_file}")
 
-    print("\n All strategies executed successfully")
+    print("\n [Trading][main] All strategies executed successfully")
 
 if __name__ == "__main__":
     main()

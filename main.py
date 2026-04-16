@@ -38,6 +38,7 @@ def process_all_symbols():
     symbol_list_9 = []
     symbol_list_10 = []
     symbol_list_11 = []
+    demo_symbol_list = []
 
     stock_data = StockData()
     stock_data.init_listing()
@@ -45,15 +46,15 @@ def process_all_symbols():
     symbol_list = stock_data.listing_information_all_symbols()
     # symbol_list = stock_data.listing_information_by_exchange("HNX")
     filter_symbol_list = {}
-    if not os.path.exists('filtered_stocks'):
-        print("filtered_stocks is not exists")
+    if not os.path.exists('filtered_stocks.csv'):
+        print("[Main][process_all_symbols] filtered_stocks is not exists")
         filter_symbol_list = filter_stocks_by_market_cap_and_volume(symbol_list)
         if filter_symbol_list is not None:
-            print("Successfully filtered stocks data")
+            print("[Main][process_all_symbols] Successfully filtered stocks data")
         else:
-            print("Failed to filter stocks data")
+            print("[Main][process_all_symbols]Failed to filter stocks data")
     else:
-        print("Filtered stocks data already exists. Load symbols")
+        print("[Main][process_all_symbols] Filtered stocks data already exists. Load symbols")
         filter_symbol_list = get_filtered_symbols()
     company_data = {}
 
@@ -61,7 +62,7 @@ def process_all_symbols():
         try:
             stock_analyzer = StockAnalyzer(symbol)
             stock_analyzer.init_Stock()
-            stock_analyzer.update_data_frame("2026-03-01", "2026-04-14")
+            stock_analyzer.update_data_frame("2026-03-01", "2026-04-16")
 
             if stock_analyzer.data_frame is None:
                 continue
@@ -108,8 +109,8 @@ def process_all_symbols():
             # Store company data
             company_data[symbol] = comp
         except Exception as e:
-            print(comp.symbol + " can't check")
-            print(f"Reason: {e}")
+            print("[Main][process_all_symbols] " + comp.symbol + " can't check")
+            print(f"[Main][process_all_symbols] Reason: {e}")
             continue
 
         if ma20_retest_setup(comp) is not None:
@@ -165,7 +166,7 @@ def process_all_symbols():
         with open('company_data.pkl', 'wb') as f:
             pickle.dump(company_data, f)
     except Exception as e:
-        print(f'Error saving company data: {e}')
+        print(f'[Main][process_all_symbols] Error saving company data: {e}')
 
     return result_data, company_data
 
@@ -212,16 +213,16 @@ def write_comparison_report(available, unavailable, potential, filename="compari
 def run_trading_system():
     """Run the trading system"""
     try:
-        print("Run the trading system")
+        print("[Main][run_trading_system] Run the trading system")
         result = subprocess.run([sys.executable, "Trading/main.py"], capture_output=True, text=True)
         if result.returncode == 0:
-            print("Trading system executed successfully")
+            print("[Main][run_trading_system] Trading system executed successfully")
             print(result.stdout)
         else:
-            print("Error running trading system")
+            print("[Main][run_trading_system] Error running trading system")
             print(result.stderr)
     except Exception as e:
-        print(f"Error running trading system: {e}")
+        print(f"[Main][run_trading_system] Error running trading system: {e}")
 
 
 # Press the green button in the gutter to run the script.
@@ -233,17 +234,17 @@ if __name__ == '__main__':
         csv_file_path = "data.csv"
 
         if not os.path.exists(csv_file_path):
-            print("No existing csv file found. Processing all symbols and creating new data.csv...")
+            print("[Main][main] No existing csv file found. Processing all symbols and creating new data.csv...")
             # Process all symbols and save to CSV
             result_data, company_data = process_all_symbols()
             result_data.to_csv(csv_file_path, index=False)
-            print("Processing complete. Data saved to data.csv")
+            print("[Main][main] Processing complete. Data saved to data.csv")
         else:
-            print("Existing CSV file found. Loading input data...")
+            print("[Main][main] Existing CSV file found. Loading input data...")
             # Load existing data
             input_data = pd.read_csv(csv_file_path)
 
-            print("Processing all symbols to find potential opportunities...")
+            print("[Main][main] Processing all symbols to find potential opportunities...")
             # processs all symbols to get current results
             output_data, company_data = process_all_symbols()
 
@@ -256,11 +257,11 @@ if __name__ == '__main__':
             # write comparision report
             write_comparison_report(available, unavailable, potential)
 
-            print("Analysis complete.")
-            print(f"- Available symbols: {len(available)}")
-            print(f"- Unavailable symbols: {len(unavailable)}")
-            print(f"- Potential symbols: {len(potential)}")
-            print("Detailed report saved to comparison_report.txt")
-            print("Current data saved to data_current.csv for next day use")
+            print("[Main][main] Analysis complete.")
+            print(f"[Main][main] - Available symbols: {len(available)}")
+            print(f"[Main][main] - Unavailable symbols: {len(unavailable)}")
+            print(f"[Main][main] - Potential symbols: {len(potential)}")
+            print("[Main][main] Detailed report saved to comparison_report.txt")
+            print("[Main][main] Current data saved to data_current.csv for next day use")
 
         run_trading_system()

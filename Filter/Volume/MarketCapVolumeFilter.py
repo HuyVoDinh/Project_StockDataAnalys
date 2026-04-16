@@ -9,8 +9,7 @@ from StockData.stock_data import StockData
 
 
 def filter_stocks_by_market_cap_and_volume(symbol_list, output_file="filtered_stocks.csv"):
-    filtered_stocks_df = pd.DataFrame()
-    # try:
+    filtered_stocks_df = []
     for symbol in symbol_list['symbol']:
         stock_analyzer = StockAnalyzer(symbol)
         stock_analyzer.init_Stock()
@@ -19,22 +18,21 @@ def filter_stocks_by_market_cap_and_volume(symbol_list, output_file="filtered_st
             continue
         stock_analyzer.Calculate_Trading_Value()
         print(symbol)
-        if stock_analyzer['trading_value'] > 50:
+        trading_value = stock_analyzer.data_frame['trading_value']
+        if trading_value.iloc[-1] > 50:
+            print("[MarketCapVolumeFilter][filter_stocks_by_market_cap_and_volume] Filtered stocks data - add: " + symbol)
             filtered_stocks_df.append(symbol)
+        else:
+            print(f"[MarketCapVolumeFilter][filter_stocks_by_market_cap_and_volume] {symbol} - {trading_value.iloc[-1] if not trading_value.empty else 'No data'} < 50")
 
-        pd.DataFrame(filtered_stocks_df, columns=['fundamental_technical_setup'])
-        result_data = pd.concat([filtered_stocks_df], axis=1)
-        result_data.to_csv(output_file, index=False)
+    result_data = pd.DataFrame(filtered_stocks_df, columns=['fundamental_technical_setup'])
+    result_data.to_csv(output_file, index=False)
     return filtered_stocks_df
-    # except Exception as e:
-    #     print(e)
-    #     return None
-
 
 def get_filtered_symbols(filtered_file="filtered_stocks.csv"):
     try:
         if not os.path.exists(filtered_file):
-            print("File not found")
+            print("[MarketCapVolumeFilter][filter_stocks_by_market_cap_and_volume] File not found")
             return []
 
         df = pd.read_csv(filtered_file)
@@ -43,8 +41,8 @@ def get_filtered_symbols(filtered_file="filtered_stocks.csv"):
             symbols = df['symbol'].tolist()
             return symbols
         else:
-            print("No symbols found")
+            print("[MarketCapVolumeFilter][filter_stocks_by_market_cap_and_volume] No symbols found")
             return []
     except Exception as e:
-        print(e)
+        print(f"[MarketCapVolumeFilter][filter_stocks_by_market_cap_and_volume] {e}")
         return []
