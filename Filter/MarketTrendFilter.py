@@ -3,7 +3,7 @@ from multiprocessing.dummy import current_process
 from Model import Company
 from Enum.trend import Trend, MarketState, Momentum
 
-class MerketTrendFilter:
+class MarketTrendFilter:
     def __init__(self):
         pass
 
