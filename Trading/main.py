@@ -41,6 +41,26 @@ def load_company_data():
     except Exception as e:
         print(f"[Trading][load_company_data] Error loading company data: {e}")
 
+def get_filtered_symbol():
+    """Load symbols from filtered_stocks.csv"""
+    try:
+        # load the filtered sotcks CSV
+        filtered_file = "filtered_stocks.csv"
+
+        if os.path.exists(filtered_file):
+            df = pd.read_csv(filtered_file)
+            if 'symbol' in df.columns:
+                symbols = df['symbol'].tolist()
+                return symbols
+            else:
+                print(f"[Trading][get_filtered_symbol] 'symbol' column not found. Please run main.py firest to generate data.")
+        else:
+            print("[Trading][get_filtered_symbol] No filtered_stocks.csv found")
+            return []
+    except Exception as e:
+        print(f"[Trading][get_filtered_symbol] Error loading filtered_stocks.csv: {e}")
+        return []
+
 def get_all_symbols(data_df):
     """Extract all symbols from the data frame"""
     symbols = set()
@@ -49,13 +69,22 @@ def get_all_symbols(data_df):
     return list(symbols)
 
 def get_current_prices(symbols):
-    """Get current prices for symbols (simplified with dummy prices)"""
-    # In a real implementation, you would get actual current prices
-    # For now, using dummy prices
+    """Get current prices for symbols from company data"""
     prices = {}
+    company_data = load_company_data()
     for symbol in symbols:
-        # Using a dummy price of 100,000 for all symbols
-        prices[symbol] = 100000
+       if symbol in company_data and company_data[symbol].company_data:
+            # Get the lastest price from company data
+            lastest_data = company_data[symbol].company_data[-1]
+            if lastest_data and lastest_data.price and lastest_data.price.close_price:
+                prices[symbol] = lastest_data.price.close_price
+            else:
+                # Fallback to average of open and close if close price not available
+                if lastest_data.price and lastest_data.price.open_price:
+                    prices[symbol] = (lastest_data.price.open_price + lastest_data.price.open_price) / 2 if lastest_data.price.close_price else lastest_data.price.open_price
+                else:
+                    # Last fallback to a default value
+                    prices[symbol] = 100000
     return prices
 
 def main():
@@ -73,8 +102,11 @@ def main():
     print(f"[Trading][main] Loaded company data for {len(company_data)} symbols")
 
     # Get all symbols
-    symbols = get_all_symbols(data_df)
-    print(f"[Trading][main] Found {len(symbols)} symbols in the data")
+    symbols = get_filtered_symbol()
+    if not symbols:
+        print("[Trading][main] No symbols found, using all symbols from data")
+        symbols = get_all_symbols(data_df)
+    print(f"[Trading][main] Found {len(symbols)} symbols to process")
 
     # Get current prices (simplified)
     current_prices = get_current_prices(symbols)

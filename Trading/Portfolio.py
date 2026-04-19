@@ -133,10 +133,11 @@ class Portfolio:
 
     def get_portfolio_report(self, current_prices):
         """Generate portfolio report"""
-        report = f"Portfolio Report for {self.name}"
+        report = f"Portfolio Report for {self.name}\n"
         report += "=" * 50 + "\n"
-        report += f"Cash: {self.cash:,.0f} VND\\n"
+        report += f"Cash: {self.cash:,.0f} VND\n"
         report += f"Total Value: {self.get_portfolio_value(current_prices):,.0f} VND\n"
+        report += f"Number of positions: {len(current_prices)}\n"
         report += "\nPositions:\n"
         report += "-" * 30 + "\n"
 
@@ -148,13 +149,24 @@ class Portfolio:
             profit_loss = market_value - cost_basis
             total_profit_loss += profit_loss
 
-            report += f"{symbol}: {position['quantity']} shares\n"
-            report += f"  Purchase Price: {position['purchase_price']:,.0f} VND\n"
-            report += f"  Market Value: {market_value:,.0f} VND\n"
-            report += f"  P/L: {profit_loss:,.0f} VND\n\n"
+            # Calcualte the number of percentage of the profit
+            if cost_basis > 0:
+                profit_pct = (profit_loss / cost_basis) * 100
+                report += f"(symbol): {position['quantity']} shares\n"
+                report += f" Purchase Price: {position['purchase_price']:,.0f} VND\n"
+                report += f" Current Price: {current_price:,.0f} VND\n"
+                report += f" Market Value: {market_value:,.0f} VND\n"
+                report += f" Profit Loss: {profit_loss:,.0f} VND ({profit_pct:.2f}%)\n\n"
+            else:
+                report += f"{symbol}: {position['quantity']} shares\n"
+                report += f"  Purchase Price: {position['purchase_price']:,.0f} VND\n"
+                report += f"  Market Value: {market_value:,.0f} VND\n"
+                report += f"  P/L: {profit_loss:,.0f} VND\n\n"
 
+        # Calculate realized profit
+        realized_profit = sum(t['cash_change'] for t in self.trade_history if t['action'] == 'Sell')
         report += f"Unrealized P/L: {total_profit_loss:,.0f} VND\n"
         report += f"Realized P/L: {sum(t['cash_change'] for t in self.trade_history if t['action'] == 'SELL') - sum(abs(t['cash_change']) for t in self.trade_history if t['action'] == 'BUY'):,.0f} VND\n"
-        
+        report += f"Total P/L: {total_profit_loss + realized_profit:,.0f} VND\n"
         return report
 
