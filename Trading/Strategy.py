@@ -79,11 +79,25 @@ class Strategy(ABC):
         company_data = data.get('company_data', {}).get(symbol)
 
         if company_data and len(company_data.company_data) >= 2:
+            lastest_data = company_data.company_data[-1]
             # Use ATR for stop loss calculation if available
-            atr = company_data.company_data[-1].ATR_14
+            atr = lastest_data.ATR_14
             if atr and atr > 0:
-                # Set stop loss at 1.5x ATR below entry price
-                return entry_price - (1.5 * atr)
+                # Set stop loss at 2x ATR below entry price for more conservative approach
+                atr_stop = entry_price - (2.0 * atr)
+
+                # Also consider swing low
+                recent_data = company_data.company_data[-5:] # last 5 periods
+                swing_lows = [d.price.low_price for d in recent_data]
+                if swing_lows:
+                    recent_swing_low = min(swing_lows)
+                    # Ensure stop loss is below entry price but now too far
+                    swing_stop = max(recent_swing_low, entry_price * 0.9) # At least 10% below entry
+
+                    # Return the more conservative (lower) stop loss
+                    return min(atr_stop, swing_stop)
+                else:
+                    return atr_stop
 
             # Fallback to recent swing low analysis
             recent_data = company_data.company_data[-5:] # Last 5 periods
@@ -91,11 +105,11 @@ class Strategy(ABC):
             if swing_lows:
                 recent_swing_low = min(swing_lows)
                 # Ensure stop loss is below entry price but not too far
-                stop_loss = max(recent_swing_low, entry_price * 0.92) # At least 8% below entry
+                stop_loss = max(recent_swing_low, entry_price * 0.9) # At least 10% below entry
                 return stop_loss
 
-        # Default fallback: 8% below entry price
-        return entry_price * 0.92
+        # Default fallback: 10% below entry price (more conservative)
+        return entry_price * 0.90
 
     def get_confidence_level(self, symbol, data):
         """
@@ -106,13 +120,61 @@ class Strategy(ABC):
         :return:
         """
 
-        # In a real implementation, this would analyze multiple factors:
-        # - Strength of the setup
-        # - Volume confirmation
-        # - Market conditions
-        # - Technical factor
-        # Now use default confidence level
-        return 1.0
+        # Get company data for technical analysis
+        company_data = data.get('company_data', {}).get(symbol)
+        current_price = data.get('current_price', {}).get(symbol)
+
+        if not company_data or current_price <= 0 or len(company_data.company_data) < 2:
+            return 1.0 # Default confidence level
+
+        confidence = 1.0
+        lastest_data = company_data.company_data[-1]
+        previous_data = company_data.company_data[-2]
+
+        # 1. Volume confirmation (0.5 - 1.2)
+        if lastest_data.volume > lastest_data.moving_average_20.ma_volume * 1.5:
+            confidence *= 1.1 # High volume confirmation
+        elif lastest_data.volume < lastest_data.moving_average_20.ma_volume * 0.8:
+            confidence *= 0.9 # Lower volume confirmation
+
+        # 2. Price action confirmation (0.9 - 1.1)
+        # Check if close_price is in the upper half of the candle
+        if lastest_data.price.close_price > (lastest_data.price.high_price + lastest_data.price.low_price) / 2:
+            confidence *= 1.05 # Bullish price action
+
+        # 3. RSI confirmation (0.8 - 1.2)
+        if 50 <= lastest_data.RSI_14 <= 70:
+            confidence *= 1.1 # RSI in bullish range
+        elif lastest_data.RSI_14 > 70:
+            confidence *= 0.9 # RSI overbought
+        elif lastest_data.RSI_14 < 30:
+            confidence *= 0.95 # RSI oversold (may reverse)
+
+        # 4. Moving average confirmation (0.9 - 1.2)
+        if lastest_data.price.close_price > lastest_data.moving_average_20.ma_price:
+            confidence *= 1.05 # Price above 20-day MA
+        if lastest_data.moving_average_10.ma_price > lastest_data.moving_average_20.ma_price:
+            confidence *= 1.05 # 10-day MA above 20-day MA (bullish trend)
+
+        # 5. Volatility confirmation using ATR (0.8 - 1.2)
+        if lastest_data.ATR_14 and lastest_data.ATR_14 > lastest_data.ATR_MA5:
+            confidence *= 1.05 # Increasing volatility
+        elif lastest_data.ATR_14 and lastest_data.ATR_14 < lastest_data.ATR_MA5 * 0.8:
+            confidence *= 0.95 # Decreasing volatility
+
+        # 6. Trend confirmation with ADX (1.0 - 1.3)
+        if lastest_data.ADX_14.ADX and lastest_data.ADX_14.ADX > 25:
+            # Strong trend
+            if lastest_data.ADX_14.plus_DI and lastest_data.ADX_14.minus_DI:
+                if lastest_data.ADX_14.plus_DI > lastest_data.ADX_14.minus_DI:
+                    confidence *= 1.15 # Strong bullish trend
+                else:
+                    confidence *= 0.9 # Strong bearish trend
+        elif lastest_data.ADX_14.ADX and lastest_data.ADX_14.ADX < 20:
+            confidence *= 0.95 # Weak trend
+
+        # Ensure confidence level stays within reasonable bounds
+        return max(0.5,min(confidence, 2.0))
 
     def execute_trades(self, data, current_prices):
         """Execute trades based on strategy with professional position sizing"""
@@ -128,7 +190,7 @@ class Strategy(ABC):
         # Check a copy of the keys to avoid modifying the dictionary during iteration
         position_to_check = list(self.portfolio.position.keys())
         for symbol in position_to_check:
-            # Only sell if all condition in should_sell are not
+            # Only sell if all condition in should_sell are met
             if self.should_sell(symbol, data_with_prices):
                 # Sell at current price
                 current_price = current_prices.get(symbol, 0)
@@ -147,7 +209,7 @@ class Strategy(ABC):
             symbols_to_buy = symbols_to_buy[:available_slots]
 
             for symbol in symbols_to_buy:
-                # Only buy if all conditions in should_buy are not
+                # Only buy if all conditions in should_buy are met
                 if self.should_buy(symbol, data_with_prices):
                     current_price = current_prices.get(symbol, 0)
                     if current_price > 0:
@@ -158,7 +220,7 @@ class Strategy(ABC):
                         quantity = self.calculate_position_size(current_price, stop_loss)
 
                         # Adjust quantity based on confidence level
-                        confidence = self.get_confidence_level(symbol, current_price)
+                        confidence = self.get_confidence_level(symbol, data_with_prices)
                         quantity = int(quantity * confidence)
 
                         # Ensure don't exceed available cash and implement position sizing limits
