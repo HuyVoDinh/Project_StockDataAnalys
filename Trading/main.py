@@ -9,6 +9,9 @@ from Trading.Strategy2 import Strategy2
 from Trading.Strategy3 import Strategy3
 from Trading.Strategy4 import Strategy4
 from Trading.Strategy5 import Strategy5
+from Trading.Strategy6 import Strategy6
+from Trading.Strategy7 import Strategy7
+
 
 def load_current_data():
     """Load current data from the main processing"""
@@ -118,6 +121,8 @@ def main():
         Strategy3(),
         Strategy4(),
         Strategy5(),
+        Strategy6(),
+        Strategy7(),
         Demo(),
     ]
 

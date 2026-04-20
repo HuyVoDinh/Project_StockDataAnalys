@@ -41,7 +41,7 @@ def price_action_setup(comp, market_data = None):
     volatility_filter = VolatilityFilter()
     price_action_filter = PriceActionFilter()
     liquidity_filter = LiquidityFilter()
-    market_trend_filter = MerketTrendFilter()
+    market_trend_filter = MarketTrendFilter()
 
     smart_money = volume_filter.find_smart_market(current_data)
     ma_trend = short_term_filter.moving_average_filter(current_data, previous_data)

@@ -6,7 +6,7 @@ class Strategy1(Strategy):
     def __init__(self):
         # MA retest and volume spike strategy
         # Moderate risk, 8 maximum position
-        super().__init__("Strategy_1_MA20_Volume", max_position=9, risk_per_trade=0.01)
+        super().__init__("Strategy1_MA20_Volume", max_position=9, risk_per_trade=0.01)
 
     def identify_symbols(self, data):
         """Identify symbols using MA20 Retest and Volume spike setups"""

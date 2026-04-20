@@ -6,7 +6,7 @@ class Strategy3(Strategy):
     def __init__(self):
         # MACD Divergence and RSI Reversal strategy
         # Aggressive approach, 12 maximum positions, higher risk per trade
-        super().__init__("Trategy3_MACD_RSI", max_position = 12, risk_per_trade=0.015)
+        super().__init__("Strategy3_MACD_RSI", max_position = 12, risk_per_trade=0.015)
 
     def identify_symbols(self, data):
         """Identify symbols using MACD Divergence and RSI Reversal setups"""

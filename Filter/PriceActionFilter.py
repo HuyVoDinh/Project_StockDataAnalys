@@ -16,7 +16,7 @@ class PriceActionFilter:
         open_price = company_data.price.open_price
         high_price = company_data.price.high_price
         low_price = company_data.price.low_price
-        close_price = company_data.close_price
+        close_price = company_data.price.close_price
 
         # Calculate the candle body and wick.
         body = abs(close_price - open_price)
@@ -41,7 +41,7 @@ class PriceActionFilter:
         curr_open = current_data.price.open_price
         curr_close = current_data.price.close_price
         prev_open = previous_data.price.open_price
-        prev_close = previous_data.close_price
+        prev_close = previous_data.price.close_price
 
         # Bullish engulfing: A green candle engulfing the previous red candle.
         if (curr_close > curr_open and

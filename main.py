@@ -2,7 +2,7 @@ import os.path
 import pickle
 import subprocess
 import sys
-from time import sleep
+from datetime import datetime
 
 from Setup.ShortTerm.AbsorptionSetup import absorption_setup
 from Setup.ShortTerm.Ma20RetestSetup import ma20_retest_setup
@@ -57,14 +57,16 @@ def process_all_symbols():
         print("[Main][process_all_symbols] Filtered stocks data already exists. Load symbols")
         filter_symbol_list = get_filtered_symbols()
     company_data = {}
-
+    now = datetime.now()
     for symbol in filter_symbol_list:
         try:
             stock_analyzer = StockAnalyzer(symbol)
             stock_analyzer.init_Stock()
-            stock_analyzer.update_data_frame("2026-03-01", "2026-04-16")
+
+            stock_analyzer.update_data_frame("2024-01-01", now.strftime("%Y-%m-%d"))
 
             if stock_analyzer.data_frame is None:
+                print(f"[Main][process_all_symbols] Failed to get stock data: {symbol}")
                 continue
 
             stock_analyzer.Calculate_Trading_Value()
@@ -249,7 +251,7 @@ if __name__ == '__main__':
             output_data, company_data = process_all_symbols()
 
             # Save current results for next day use
-            output_data.to_csv("data_current", index=False)
+            output_data.to_csv("data_current.csv", index=False)
 
             # Compare results
             available, unavailable, potential = compare_result(input_data, output_data)

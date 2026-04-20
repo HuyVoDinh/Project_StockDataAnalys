@@ -122,7 +122,7 @@ class Strategy(ABC):
 
         # Get company data for technical analysis
         company_data = data.get('company_data', {}).get(symbol)
-        current_price = data.get('current_price', {}).get(symbol)
+        current_price = data.get('current_price', {}).get(symbol, 0)
 
         if not company_data or current_price <= 0 or len(company_data.company_data) < 2:
             return 1.0 # Default confidence level
