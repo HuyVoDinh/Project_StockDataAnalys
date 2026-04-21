@@ -46,7 +46,7 @@ class VolatilityFilter:
         elif company_data.ATR_14 / company_data.price.close_price > 0.05:
             return Emplitude.Bulltrap
 
-        #ATR slightly increased(good setup) Today's ATR > ATR MA5 → volatility is opening up
+        #ATR slightly increased(good setups) Today's ATR > ATR MA5 → volatility is opening up
         if company_data.ATR_14 > company_data.ATR_MA5:
             return Emplitude.Good
         return Emplitude.Weak
@@ -65,7 +65,7 @@ class VolatilityFilter:
         return Emplitude.Break
 
     def bandwidth_filter2(self, company_data):
-        # Price moves from Middle → Upper band -> Strong T + (trading)
+        # Price moves from Middle → Upper band -> Strong T + (tradings)
         # Price touches Upper band + sudden surge in volume → sell
         if company_data.Bollinger_Bands.Middle < company_data.price.close_price and company_data.Bollinger_Bands.BB_Upper > company_data.price.close_price:
             return Emplitude.Break

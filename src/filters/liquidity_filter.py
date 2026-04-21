@@ -105,7 +105,7 @@ class LiquidityFilter:
 
     def check_institutional_activity(self, company_data_list, periods=5):
         """
-        Assess the activity of institutional investors through trading volume and value.
+        Assess the activity of institutional investors through tradings volume and value.
         :param company_data_list:
         :param periods:
         :return:
@@ -121,7 +121,7 @@ class LiquidityFilter:
             if(data.volume > data.moving_average_20.ma_volume * 1.5 and data.trading_value > 100):
                 high_volume_days += 1
 
-        # If there are at least two sessions with high volume and large trading value.
+        # If there are at least two sessions with high volume and large tradings value.
         if high_volume_days >= 2:
             return Cash_Flow.Smart_Money
         else:

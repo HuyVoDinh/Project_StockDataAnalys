@@ -17,7 +17,7 @@ class RiskFilter:
     def find_stop_loss(self, company_data, entry):
         return entry - 1 * company_data.ATR_14
 
-    # Nếu stop > 4% → loại setup
+    # Nếu stop > 4% → loại setups
     def is_valid_stop_loss(self, stop_loss):
         if (stop_loss > 0.035):
             return RiskLevel.HIGH

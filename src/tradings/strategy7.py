@@ -1,14 +1,14 @@
-from src.trading.strategy import Strategy
-from src.setup.short_term.support_resistance_setup import support_resistance_setup
+from src.tradings.strategy import strategy
+from src.setups.short_term.support_resistance_setup import support_resistance_setup
 
-class Strategy7(Strategy):
+class strategy7(strategy):
     def __init__(self):
         # Support Resistance Strategy
         # Balanced approach with support/resistance confirmation
         super().__init__("Strategy7_SupportResistance", max_position=10, risk_per_trade=0.012)
 
     def identify_symbols(self, data):
-        """Identify symbols using Support Resistance setup"""
+        """Identify symbols using Support Resistance setups"""
         symbols = []
         market_data = data.get('market_data', [])
 
@@ -16,20 +16,20 @@ class Strategy7(Strategy):
         for symbol in data.get('symbols', []):
             company = data['company_data'].get(symbol)
             if company:
-                # Check if symbol qualifies for support/resistance setup
+                # Check if symbol qualifies for support/resistance setups
                 if support_resistance_setup(company, market_data) is not None:
                     symbols.append(symbol)
 
         return symbols
 
     def should_buy(self, symbol, data):
-        """Buy if symbol qualifies for support/resistance setup with additional risk management"""
+        """Buy if symbol qualifies for support/resistance setups with additional risk management"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
         market_data = data.get('market_data', [])
 
         if company and current_price > 0:
-            # Check if symbol qualifies for support/resistance setup
+            # Check if symbol qualifies for support/resistance setups
             support_resistance_qualifies = support_resistance_setup(company, market_data) is not None
 
             # Additional risk management checks
@@ -38,7 +38,7 @@ class Strategy7(Strategy):
                 stop_loss = self.get_stop_loss_price(symbol, current_price, data)
                 risk_per_share = abs(current_price - stop_loss)
 
-                # Calculate potential reward (assuming 6% target for support/resistance setup)
+                # Calculate potential reward (assuming 6% target for support/resistance setups)
                 potential_reward = current_price * 0.06
 
                 # Check risk-reward ratio
@@ -50,17 +50,17 @@ class Strategy7(Strategy):
         return False
 
     def should_sell(self, symbol, data):
-        """Sell if symbol no longer qualifies for support/resistance setup or risk management conditions are met"""
+        """Sell if symbol no longer qualifies for support/resistance setups or risk management conditions are met"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
         position = self.portfolio.positions.get(symbol)
         market_data = data.get('market_data', [])
 
         if company and current_price > 0 and position:
-            # Check if symbol still qualifies for support/resistance setup
+            # Check if symbol still qualifies for support/resistance setups
             support_resistance_qualifies = support_resistance_setup(company, market_data) is not None
 
-            # If no longer qualifies for setup, consider selling
+            # If no longer qualifies for setups, consider selling
             if not support_resistance_qualifies:
                 return True
 

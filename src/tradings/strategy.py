@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from src.trading.portfolio import Portfolio
+from src.tradings.portfolio import portfolio
 
 
-class Strategy(ABC):
+class strategy(ABC):
     def __init__(self, name, max_position=10, risk_per_trade=0.01):
         self.name = name
-        self.portfolio = Portfolio(name)
+        self.portfolio = portfolio(name)
         self.symbol = [] # Symbols identified by this strategy
         self.max_position = max_position # Maximum number of position to hold
         self.risk_per_trade = risk_per_trade # risk percentage per trade (1% of portfolio)

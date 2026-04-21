@@ -1,9 +1,9 @@
-from src.trading.strategy import Strategy
-from src.setup.short_term.ma20_retest_setup import ma20_retest_setup
-from src.setup.short_term.bb_squeeze_setup import bb_squeeze_setup
-from src.setup.short_term.macd_divergence_setup import macd_divergence_setup
+from src.tradings.strategy import strategy
+from src.setups.short_term.ma20_retest_setup import ma20_retest_setup
+from src.setups.short_term.bb_squeeze_setup import bb_squeeze_setup
+from src.setups.short_term.macd_divergence_setup import macd_divergence_setup
 
-class Strategy4(Strategy):
+class strategy4(strategy):
     def __init__(self):
         # MA20 Retest, Bollinger Band Squeeze, and MACD Divergence strategy
         # Balanced approach, 10 maximum positions
@@ -17,18 +17,18 @@ class Strategy4(Strategy):
         for symbol in data.get('symbols', []):
             company = data['company_data'].get(symbol)
             if company:
-                # Check if symbol qualifies for any setup
+                # Check if symbol qualifies for any setups
                 if (ma20_retest_setup(company) is not None or bb_squeeze_setup(company) is not None or macd_divergence_setup(company) is not None):
                     symbols.append(symbol)
         return symbols
 
     def should_buy(self, symbol, data):
-        """Buy if symbol qualifies for any setup"""
+        """Buy if symbol qualifies for any setups"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
 
         if company and current_price > 0:
-            # Check if symbol qualifies for either setup
+            # Check if symbol qualifies for either setups
             ma20_qualifies = ma20_retest_setup(company) is not None
             bb_qualifies = bb_squeeze_setup(company) is not None
             macd_qualifies = macd_divergence_setup(company) is not None
@@ -39,7 +39,7 @@ class Strategy4(Strategy):
                 stop_loss = self.get_stop_loss_price(symbol, current_price, data)
                 risk_per_share = abs(current_price - stop_loss)
 
-                # Calculate potential reward (assuming 5% target for short-term setup)
+                # Calculate potential reward (assuming 5% target for short-term setups)
                 potential_reward = current_price * 0.05
 
                 # Check risk-reward ratio
@@ -52,18 +52,18 @@ class Strategy4(Strategy):
         return False
 
     def should_sell(self, symbol, data):
-        """Sell if symbol qualifies for any setup"""
+        """Sell if symbol qualifies for any setups"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
         position = self.portfolio.position.get(symbol)
 
         if company and current_price > 0 and position:
-            # Check uf symbol still qualifies for either setup
+            # Check uf symbol still qualifies for either setups
             macd_qualifies = macd_divergence_setup(company) is not None
             bb_qualifies = bb_squeeze_setup(company) is not None
             ma20_qualifies = ma20_retest_setup(company) is not None
 
-            # If no longer qualifies for any setup, consider selling
+            # If no longer qualifies for any setups, consider selling
             if not macd_qualifies and not ma20_qualifies and not bb_qualifies:
                 return True
 
@@ -72,7 +72,7 @@ class Strategy4(Strategy):
             if current_price <= stop_loss:
                 return True
 
-            # Check if have hold the position for too long (more than 5 trading days)
+            # Check if have hold the position for too long (more than 5 tradings days)
             # This would require tracking purchasew data, which is not currently implemented
             take_profit_price = position['purchase_price'] * 1.08
             if current_price >= take_profit_price:

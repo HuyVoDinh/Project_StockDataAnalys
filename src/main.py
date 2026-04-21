@@ -4,17 +4,17 @@ import subprocess
 import sys
 from datetime import datetime
 
-from setup.short_term.absorption_setup import absorption_setup
-from setup.short_term.ma20_retest_setup import ma20_retest_setup
-from setup.short_term.bb_squeeze_setup import bb_squeeze_setup
-from  setup.short_term.rsi_reversal_setup import rsi_reversal_setup
-from setup.short_term.volume_spike_setup import volume_spike_setup
-from setup.short_term.macd_divergence_setup import macd_divergence_setup
-from setup.long_term.long_trend_following_setup import long_trend_following_setup
-from setup.long_term.fundamental_technical_setup import fundamental_technical_setup
-from setup.medium_term.ma50_support_setup import ma50_support_setup
-from setup.medium_term.breakout_volume_setup import breakout_volume_setup
-from setup.medium_term.multi_timeframe_trend_setup import multi_timeframe_trend_setup
+from setups.short_term.absorption_setup import absorption_setup
+from setups.short_term.ma20_retest_setup import ma20_retest_setup
+from setups.short_term.bb_squeeze_setup import bb_squeeze_setup
+from  setups.short_term.rsi_reversal_setup import rsi_reversal_setup
+from setups.short_term.volume_spike_setup import volume_spike_setup
+from setups.short_term.macd_divergence_setup import macd_divergence_setup
+from setups.long_term.long_trend_following_setup import long_trend_following_setup
+from setups.long_term.fundamental_technical_setup import fundamental_technical_setup
+from setups.medium_term.ma50_support_setup import ma50_support_setup
+from setups.medium_term.breakout_volume_setup import breakout_volume_setup
+from setups.medium_term.multi_timeframe_trend_setup import multi_timeframe_trend_setup
 from models.company import Company, CompanyData
 from src.analysis.stock_analyzer import StockAnalyzer
 from src.analysis.stock_data import StockData
@@ -27,18 +27,18 @@ isRegistered = False
 def process_all_symbols():
     # Init save data
     ##############  volume  ######################
-    symbol_list_1 = []
-    symbol_list_2 = []
-    symbol_list_3 = []
-    symbol_list_4 = []
-    symbol_list_5 = []
-    symbol_list_6 = []
-    symbol_list_7 = []
-    symbol_list_8 = []
-    symbol_list_9 = []
-    symbol_list_10 = []
-    symbol_list_11 = []
-    demo_symbol_list = []
+    # symbol_list_1 = []
+    # symbol_list_2 = []
+    # symbol_list_3 = []
+    # symbol_list_4 = []
+    # symbol_list_5 = []
+    # symbol_list_6 = []
+    # symbol_list_7 = []
+    # symbol_list_8 = []
+    # symbol_list_9 = []
+    # symbol_list_10 = []
+    # symbol_list_11 = []
+    # demo_symbol_list = []
 
     stock_data = StockData()
     stock_data.init_listing()
@@ -115,62 +115,62 @@ def process_all_symbols():
             print(f"[Main][process_all_symbols] Reason: {e}")
             continue
 
-        if ma20_retest_setup(comp) is not None:
-            symbol_list_1.append(comp.symbol)
-
-        if absorption_setup(comp) is not None:
-            symbol_list_2.append(comp.symbol)
-
-        if bb_squeeze_setup(comp) is not None:
-            symbol_list_3.append(comp.symbol)
-
-        if volume_spike_setup(comp) is not None:
-            symbol_list_4.append(comp.symbol)
-
-        if macd_divergence_setup(comp) is not None:
-            symbol_list_5.append(comp.symbol)
-
-        if rsi_reversal_setup(comp) is not None:
-            symbol_list_6.append(comp.symbol)
-
-        if ma50_support_setup(comp) is not None:
-            symbol_list_7.append(comp.symbol)
-
-        if multi_timeframe_trend_setup(comp) is not None:
-            symbol_list_8.append(comp.symbol)
-
-        if breakout_volume_setup(comp) is not None:
-            symbol_list_9.append(comp.symbol)
-
-        if long_trend_following_setup(comp) is not None:
-            symbol_list_10.append(comp.symbol)
-
-        if fundamental_technical_setup(comp) is not None:
-            symbol_list_11.append(comp.symbol)
+        # if ma20_retest_setup(comp) is not None:
+        #     symbol_list_1.append(comp.symbol)
+        #
+        # if absorption_setup(comp) is not None:
+        #     symbol_list_2.append(comp.symbol)
+        #
+        # if bb_squeeze_setup(comp) is not None:
+        #     symbol_list_3.append(comp.symbol)
+        #
+        # if volume_spike_setup(comp) is not None:
+        #     symbol_list_4.append(comp.symbol)
+        #
+        # if macd_divergence_setup(comp) is not None:
+        #     symbol_list_5.append(comp.symbol)
+        #
+        # if rsi_reversal_setup(comp) is not None:
+        #     symbol_list_6.append(comp.symbol)
+        #
+        # if ma50_support_setup(comp) is not None:
+        #     symbol_list_7.append(comp.symbol)
+        #
+        # if multi_timeframe_trend_setup(comp) is not None:
+        #     symbol_list_8.append(comp.symbol)
+        #
+        # if breakout_volume_setup(comp) is not None:
+        #     symbol_list_9.append(comp.symbol)
+        #
+        # if long_trend_following_setup(comp) is not None:
+        #     symbol_list_10.append(comp.symbol)
+        #
+        # if fundamental_technical_setup(comp) is not None:
+        #     symbol_list_11.append(comp.symbol)
 
     ####### Export dataf
-    df1 = pd.DataFrame(symbol_list_1, columns=['ma20_retest_setup'])
-    df2 = pd.DataFrame(symbol_list_2, columns=['absorption_setup'])
-    df3 = pd.DataFrame(symbol_list_3, columns=['bb_squeeze_setup'])
-    df4 = pd.DataFrame(symbol_list_4, columns=['volume_spike_setup'])
-    df5 = pd.DataFrame(symbol_list_5, columns=['macd_divergence_setup'])
-    df6 = pd.DataFrame(symbol_list_6, columns=['rsi_reversal_setup'])
-    df7 = pd.DataFrame(symbol_list_7, columns=['ma50_support_setup'])
-    df8 = pd.DataFrame(symbol_list_8, columns=['multi_timeframe_trend_setup'])
-    df9 = pd.DataFrame(symbol_list_9, columns=['breakout_volume_setup'])
-    df10 = pd.DataFrame(symbol_list_10, columns=['long_trend_following_setup'])
-    df11 = pd.DataFrame(symbol_list_11, columns=['fundamental_technical_setup'])
+    # df1 = pd.DataFrame(symbol_list_1, columns=['ma20_retest_setup'])
+    # df2 = pd.DataFrame(symbol_list_2, columns=['absorption_setup'])
+    # df3 = pd.DataFrame(symbol_list_3, columns=['bb_squeeze_setup'])
+    # df4 = pd.DataFrame(symbol_list_4, columns=['volume_spike_setup'])
+    # df5 = pd.DataFrame(symbol_list_5, columns=['macd_divergence_setup'])
+    # df6 = pd.DataFrame(symbol_list_6, columns=['rsi_reversal_setup'])
+    # df7 = pd.DataFrame(symbol_list_7, columns=['ma50_support_setup'])
+    # df8 = pd.DataFrame(symbol_list_8, columns=['multi_timeframe_trend_setup'])
+    # df9 = pd.DataFrame(symbol_list_9, columns=['breakout_volume_setup'])
+    # df10 = pd.DataFrame(symbol_list_10, columns=['long_trend_following_setup'])
+    # df11 = pd.DataFrame(symbol_list_11, columns=['fundamental_technical_setup'])
 
-    result_data = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11], axis=1)
+    # result_data = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11], axis=1)
 
-    # Save company data to file for trading system
+    # Save company data to file for tradings system
     try:
         with open('company_data.pkl', 'wb') as f:
             pickle.dump(company_data, f)
     except Exception as e:
         print(f'[Main][process_all_symbols] Error saving company data: {e}')
 
-    return result_data, company_data
+    return company_data
 
 def compare_result(input_data, output_data):
     """Compare input and output data to generate available"""
@@ -213,18 +213,18 @@ def write_comparison_report(available, unavailable, potential, filename="compari
         f.write("\n")
 
 def run_trading_system():
-    """Run the trading system"""
+    """Run the tradings system"""
     try:
-        print("[Main][run_trading_system] Run the trading system")
-        result = subprocess.run([sys.executable, "trading/main.py"], capture_output=True, text=True)
+        print("[Main][run_trading_system] Run the tradings system")
+        result = subprocess.run([sys.executable, "tradings/main.py"], capture_output=True, text=True)
         if result.returncode == 0:
-            print("[Main][run_trading_system] trading system executed successfully")
+            print("[Main][run_trading_system] tradings system executed successfully")
             print(result.stdout)
         else:
-            print("[Main][run_trading_system] Error running trading system")
+            print("[Main][run_trading_system] Error running tradings system")
             print(result.stderr)
     except Exception as e:
-        print(f"[Main][run_trading_system] Error running trading system: {e}")
+        print(f"[Main][run_trading_system] Error running tradings system: {e}")
 
 
 # Press the green button in the gutter to run the script.
@@ -238,8 +238,8 @@ if __name__ == '__main__':
         if not os.path.exists(csv_file_path):
             print("[Main][main] No existing csv file found. Processing all symbols and creating new data.csv...")
             # Process all symbols and save to CSV
-            result_data, company_data = process_all_symbols()
-            result_data.to_csv(csv_file_path, index=False)
+            company_data = process_all_symbols()
+            # result_data.to_csv(csv_file_path, index=False)
             print("[Main][main] Processing complete. Data saved to data.csv")
         else:
             print("[Main][main] Existing CSV file found. Loading input data...")
@@ -248,22 +248,22 @@ if __name__ == '__main__':
 
             print("[Main][main] Processing all symbols to find potential opportunities...")
             # processs all symbols to get current results
-            output_data, company_data = process_all_symbols()
+            # output_data, company_data = process_all_symbols()
 
             # Save current results for next day use
-            output_data.to_csv("data_current.csv", index=False)
+            # output_data.to_csv("data_current.csv", index=False)
 
             # Compare results
-            available, unavailable, potential = compare_result(input_data, output_data)
+            # available, unavailable, potential = compare_result(input_data, output_data)
 
             # write comparision report
-            write_comparison_report(available, unavailable, potential)
-
-            print("[Main][main] Analysis complete.")
-            print(f"[Main][main] - Available symbols: {len(available)}")
-            print(f"[Main][main] - Unavailable symbols: {len(unavailable)}")
-            print(f"[Main][main] - Potential symbols: {len(potential)}")
-            print("[Main][main] Detailed report saved to comparison_report.txt")
-            print("[Main][main] Current data saved to data_current.csv for next day use")
+            # write_comparison_report(available, unavailable, potential)
+            #
+            # print("[Main][main] Analysis complete.")
+            # print(f"[Main][main] - Available symbols: {len(available)}")
+            # print(f"[Main][main] - Unavailable symbols: {len(unavailable)}")
+            # print(f"[Main][main] - Potential symbols: {len(potential)}")
+            # print("[Main][main] Detailed report saved to comparison_report.txt")
+            # print("[Main][main] Current data saved to data_current.csv for next day use")
 
         run_trading_system()

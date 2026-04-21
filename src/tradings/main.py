@@ -2,14 +2,14 @@ import pandas as pd
 import os
 import pickle
 
-from src.trading.demo import Demo
-from src.trading.strategy1 import Strategy1
-from src.trading.strategy2 import Strategy2
-from src.trading.strategy3 import Strategy3
-from src.trading.strategy4 import Strategy4
-from src.trading.strategy5 import Strategy5
-from src.trading.strategy6 import Strategy6
-from src.trading.strategy7 import Strategy7
+from src.tradings.strategy1 import strategy1
+from src.tradings.strategy2 import strategy2
+from src.tradings.strategy3 import strategy3
+from src.tradings.strategy4 import strategy4
+from src.tradings.strategy5 import strategy5
+from src.tradings.strategy6 import strategy6
+from src.tradings.strategy7 import strategy7
+from src.tradings.test_strategy import test_strategy
 
 
 def load_current_data():
@@ -24,24 +24,25 @@ def load_current_data():
             df = pd.read_csv(data_file)
             return df
         else:
-            print("[trading][load_current_data] No data file found. Please run main.py firest to generate data.")
+            print("[tradings][load_current_data] No data file found. Please run main.py firest to generate data.")
             return  None
     except Exception as e:
-        print(f"[trading][load_current_data] Error loading data: {e}")
+        print(f"[tradings][load_current_data] Error loading data: {e}")
         return None
 
 def load_company_data():
     """Load company data from the main processing"""
     try:
         # Load the company data
-        if os.path.exists("src\company_data.pkl"):
-            with open("src\company_data.pkl", "rb") as f:
+        if os.path.exists("company_data.pkl"):
+            with open("company_data.pkl", "rb") as f:
                 return pickle.load(f)
         else:
-            print("[trading][load_company_data] No company data file found")
+            print("[tradings][load_company_data] No company data file found")
             return {}
     except Exception as e:
-        print(f"[trading][load_company_data] Error loading company data: {e}")
+        print(f"[tradings][load_company_data] Error loading company data: {e}")
+        return {}
 
 def get_filtered_symbol():
     """Load symbols from filtered_stocks.csv"""
@@ -55,12 +56,12 @@ def get_filtered_symbol():
                 symbols = df['symbol'].tolist()
                 return symbols
             else:
-                print(f"[trading][get_filtered_symbol] 'symbol' column not found. Please run main.py firest to generate data.")
+                print(f"[tradings][get_filtered_symbol] 'symbol' column not found. Please run main.py firest to generate data.")
         else:
-            print("[trading][get_filtered_symbol] No filtered_stocks.csv found")
+            print("[tradings][get_filtered_symbol] No filtered_stocks.csv found")
             return []
     except Exception as e:
-        print(f"[trading][get_filtered_symbol] Error loading filtered_stocks.csv: {e}")
+        print(f"[tradings][get_filtered_symbol] Error loading filtered_stocks.csv: {e}")
         return []
 
 def get_all_symbols(data_df):
@@ -90,39 +91,39 @@ def get_current_prices(symbols):
     return prices
 
 def main():
-    print("[trading][main] Loading current data...")
-    data_df = load_current_data()
+    print("[tradings][main] Loading current data...")
+    # data_df = load_current_data()
+    #
+    # if data_df is None:
+    #     return
 
-    if data_df is None:
-        return
-
-    print("[trading][main] Data loaded successfully")
+    print("[tradings][main] Data loaded successfully")
 
     # Load company data
-    print("[trading][main] Loading company data...")
+    print("[tradings][main] Loading company data...")
     company_data = load_company_data()
-    print(f"[trading][main] Loaded company data for {len(company_data)} symbols")
+    print(f"[tradings][main] Loaded company data for {len(company_data)} symbols")
 
     # Get all symbols
     symbols = get_filtered_symbol()
     if not symbols:
-        print("[trading][main] No symbols found, using all symbols from data")
-        symbols = get_all_symbols(data_df)
-    print(f"[trading][main] Found {len(symbols)} symbols to process")
+        print("[tradings][main] No symbols found, using all symbols from data")
+        # symbols = get_all_symbols(data_df)
+    print(f"[tradings][main] Found {len(symbols)} symbols to process")
 
     # Get current prices (simplified)
     current_prices = get_current_prices(symbols)
 
     # Create strategies
     strategies = [
-        Strategy1(),
-        Strategy2(),
-        Strategy3(),
-        Strategy4(),
-        Strategy5(),
-        Strategy6(),
-        Strategy7(),
-        Demo(),
+        strategy1(),
+        strategy2(),
+        strategy3(),
+        strategy4(),
+        strategy5(),
+        strategy6(),
+        strategy7(),
+        test_strategy()
     ]
 
     # Prepare data for strategies
@@ -133,7 +134,7 @@ def main():
 
     # Execute each strategies
     for i, strategy in enumerate(strategies, 1):
-        print(f"\n[trading][main] Executing {strategy.name}...")
+        print(f"\n[tradings][main] Executing {strategy.name}...")
         strategy.execute_trades(data, current_prices)
 
         # Generate report
@@ -141,13 +142,13 @@ def main():
         print(report)
 
         # Save report to file
-        report_file = f"trading/{strategy.name}_report.csv"
+        report_file = f"tradings/{strategy.name}_report.csv"
         with open(report_file, "w", encoding='utf-8') as f:
             f.write(report)
 
-        print(f"[trading][main] Report save to {report_file}")
+        print(f"[tradings][main] Report save to {report_file}")
 
-    print("\n [trading][main] All strategies executed successfully")
+    print("\n [tradings][main] All strategies executed successfully")
 
 if __name__ == "__main__":
     main()

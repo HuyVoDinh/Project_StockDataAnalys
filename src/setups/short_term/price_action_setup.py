@@ -23,7 +23,7 @@ from src.filters.market_trend_filter import MarketTrendFilter
 
 def price_action_setup(comp, market_data = None):
     """
-    Identifying trading signals based on price action analysis.
+    Identifying tradings signals based on price action analysis.
     :param comp:
     :param market_data:
     :return:

@@ -15,9 +15,9 @@ class StockData:
         print("Listing Initialized")
 
     def init_Trading(self):
-        print("Initializing trading")
+        print("Initializing tradings")
         self.trading = Trading(source=self.source, symbol=self.symbol)
-        print("trading initialized")
+        print("tradings initialized")
 
     def listing_information_all_symbols(self):
         if self.listing is None:
@@ -53,7 +53,7 @@ class StockData:
 
     def get_trading_price(self):
         if self.trading is None:
-            print("trading is not initialized.")
+            print("tradings is not initialized.")
             self.init_Trading()
 
         board = self.trading.price_board(symbols_list=[self.symbol])

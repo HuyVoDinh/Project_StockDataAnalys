@@ -1,44 +1,44 @@
-from src.trading.strategy import Strategy
-from src.setup.short_term.absorption_setup import absorption_setup
-from src.setup.short_term.bb_squeeze_setup import bb_squeeze_setup
+from src.tradings.strategy import strategy
+from src.setups.short_term.macd_divergence_setup import macd_divergence_setup
+from src.setups.short_term.rsi_reversal_setup import rsi_reversal_setup
 
-class Strategy2(Strategy):
+class strategy3(strategy):
     def __init__(self):
-        # Absorption and Bollinger Band Squeeze strategy
-        # Conservative approach, 6 maximum position, lower risk per trade
-        super().__init__("Strategy2_Absorption_BBSqueeze", max_position=6, risk_per_trade=0.05)
+        # MACD Divergence and RSI Reversal strategy
+        # Aggressive approach, 12 maximum positions, higher risk per trade
+        super().__init__("Strategy3_MACD_RSI", max_position = 12, risk_per_trade=0.015)
 
     def identify_symbols(self, data):
-        """Identify symbols using Absorption and Bollinger Band Squeeze setups"""
+        """Identify symbols using MACD Divergence and RSI Reversal setups"""
         symbols = []
 
-        # Process data to identify  symbols
-        for symbol in data.get('symbols',[]):
+        # Procees data to identify symbols
+        for symbol in data.get('symbols', []):
             company = data['company_data'].get(symbol)
             if company:
-                # Check if symbol qualifies for either setup
-                if absorption_setup(company) is not None or bb_squeeze_setup(company) is not None:
+                # Check if symbol qualifies for either setups
+                if macd_divergence_setup(company) is not None or rsi_reversal_setup(company) is not None:
                     symbols.append(symbol)
 
         return symbols
 
     def should_buy(self, symbol, data):
-        """Buy if symbol qualifies for either setup"""
+        """Buy if symbol qualifies for either setups"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
 
         if company and current_price > 0:
-            # Check if symbol qualifies for either setup
-            absorption_qualifies = absorption_setup(company) is not None
-            bb_qualifies = bb_squeeze_setup(company) is not None
+            # Check if symbol qualifies for either setups
+            macd_qualifies = macd_divergence_setup(company) is not None
+            rsi_qualifies = rsi_reversal_setup(company) is not None
 
             # Additional risk management checks
-            if bb_qualifies or absorption_qualifies:
+            if macd_qualifies or rsi_qualifies:
                 # Ensure have at least 2:1 risk-reward ratio
                 stop_loss = self.get_stop_loss_price(symbol, current_price, data)
                 risk_per_share = abs(current_price - stop_loss)
 
-                # Calculate potential reward (assuming 5% target for short-term setup)
+                # Calculate potential reward (assuming 5% target for short-term setups)
                 potential_reward = current_price * 0.05
 
                 # Check risk-reward ratio
@@ -51,18 +51,18 @@ class Strategy2(Strategy):
         return False
 
     def should_sell(self, symbol, data):
-        """Sell if symbol qualifies for either setup"""
+        """Sell if symbol qualifies for either setups"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
         position = self.portfolio.position.get(symbol)
 
         if company and current_price > 0 and position:
-            # Check uf symbol still qualifies for either setup
-            absorption_qualifies = absorption_setup(company) is not None
-            bb_qualifies = bb_squeeze_setup(company) is not None
+            # Check uf symbol still qualifies for either setups
+            macd_qualifies = macd_divergence_setup(company) is not None
+            rsi_qualifies = rsi_reversal_setup(company) is not None
 
-            # If no longer qualifies for any setup, consider selling
-            if not absorption_qualifies and not bb_qualifies:
+            # If no longer qualifies for any setups, consider selling
+            if not macd_qualifies and not rsi_qualifies:
                 return True
 
             # risk management: Check if stop loss is hit
@@ -70,7 +70,7 @@ class Strategy2(Strategy):
             if current_price <= stop_loss:
                 return True
 
-            # Check if have hold the position for too long (more than 5 trading days)
+            # Check if have hold the position for too long (more than 5 tradings days)
             # This would require tracking purchasew data, which is not currently implemented
             take_profit_price = position['purchase_price'] * 1.08
             if current_price >= take_profit_price:

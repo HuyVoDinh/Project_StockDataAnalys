@@ -21,7 +21,7 @@ from src.filters.market_trend_filter import MarketTrendFilter
 
 def support_resistance_setup(comp, market_data = None):
     """
-    Identify trading signals based on support/resistance analysis.
+    Identify tradings signals based on support/resistance analysis.
     :param comp:
     :param market_data:
     :return:

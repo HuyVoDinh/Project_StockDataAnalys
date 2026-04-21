@@ -16,7 +16,7 @@ from src.filters.volume.VolumeFilter import VolumeFilter
 # Entry: Khi pha Upper band tang nhe
 # Stop: Duoi Middle band
 # Target: 2R
-# setup nen - bung
+# setups nen - bung
 def bb_squeeze_setup(comp):
     volume = VolumeFilter()
     shortTerm = ShortTermTrendFilter()

@@ -1,14 +1,14 @@
-from src.trading.strategy import Strategy
-from src.setup.short_term.price_action_setup import price_action_setup
+from src.tradings.strategy import strategy
+from src.setups.short_term.price_action_setup import price_action_setup
 
-class Strategy6(Strategy):
+class strategy6(strategy):
     def __init__(self):
         # Price Action Strategy
         # Conservative approach with strong signal confirmation
         super().__init__("Strategy6_PriceAction", max_position=8, risk_per_trade=0.015)
 
     def identify_symbols(self, data):
-        """Identify symbols using Price Action setup"""
+        """Identify symbols using Price Action setups"""
         symbols = []
         market_data = data.get('market_data', [])
 
@@ -16,20 +16,20 @@ class Strategy6(Strategy):
         for symbol in data.get('symbols', []):
             company = data['company_data'].get(symbol)
             if company:
-                # Check if symbol qualifies for price action setup
+                # Check if symbol qualifies for price action setups
                 if price_action_setup(company, market_data) is not None:
                     symbols.append(symbol)
 
         return symbols
 
     def should_buy(self, symbol, data):
-        """Buy if symbol qualifies for price action setup with additional risk management"""
+        """Buy if symbol qualifies for price action setups with additional risk management"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
         market_data = data.get('market_data', [])
 
         if company and current_price > 0:
-            # Check if symbol qualifies for price action setup
+            # Check if symbol qualifies for price action setups
             price_action_qualifies = price_action_setup(company, market_data) is not None
 
             # Additional risk management checks
@@ -38,7 +38,7 @@ class Strategy6(Strategy):
                 stop_loss = self.get_stop_loss_price(symbol, current_price, data)
                 risk_per_share = abs(current_price - stop_loss)
 
-                # Calculate potential reward (assuming 6% target for price action setup)
+                # Calculate potential reward (assuming 6% target for price action setups)
                 potential_reward = current_price * 0.06
 
                 # Check risk-reward ratio
@@ -50,17 +50,17 @@ class Strategy6(Strategy):
         return False
 
     def should_sell(self, symbol, data):
-        """Sell if symbol no longer qualifies for price action setup or risk management conditions are met"""
+        """Sell if symbol no longer qualifies for price action setups or risk management conditions are met"""
         company = data['company_data'].get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
         position = self.portfolio.positions.get(symbol)
         market_data = data.get('market_data', [])
 
         if company and current_price > 0 and position:
-            # Check if symbol still qualifies for price action setup
+            # Check if symbol still qualifies for price action setups
             price_action_qualifies = price_action_setup(company, market_data) is not None
 
-            # If no longer qualifies for setup, consider selling
+            # If no longer qualifies for setups, consider selling
             if not price_action_qualifies:
                 return True
 

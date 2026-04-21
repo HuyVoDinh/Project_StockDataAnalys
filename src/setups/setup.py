@@ -66,7 +66,7 @@ def setup_2(comp):
 # Stop: dưới Middle Band
 # Target: 2R
 #
-# 👉 setup nén – bung.
+# 👉 setups nén – bung.
 def setup_3(comp):
     volume = VolumeFilter()
     shortTerm = ShortTermTrendFilter()

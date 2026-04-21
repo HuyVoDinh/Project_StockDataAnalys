@@ -5,7 +5,7 @@ from src.filters.volatility.volatility_filter import VolatilityFilter
 from src.filters.volume.VolumeFilter import VolumeFilter
 
 
-# Fundamental + Technical setup (Long-term)
+# Fundamental + Technical setups (Long-term)
 # P/E < ngành trung bình
 # ROE > 15%
 # Giá trên MA50

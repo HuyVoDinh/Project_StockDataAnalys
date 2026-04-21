@@ -3,14 +3,14 @@ from datetime import datetime
 import os
 import json
 
-class Portfolio:
+class portfolio:
     def __init__(self, name, initial_cash = 1000000000):
         self.name = name
         self.cash = initial_cash
         self.position = {} #Symbol{'quantity': int, 'purchase_price': float}
         self.trade_history = [] # List of trades
-        self.portfolio_file = f"Trading/{name}_portfolio.json"
-        self.history_file = f"Trading/{name}_history.csv"
+        self.portfolio_file = f"trading/{name}_portfolio.json"
+        self.history_file = f"trading/{name}_history.csv"
         self.load_portfolio()
 
     def load_portfolio(self):
