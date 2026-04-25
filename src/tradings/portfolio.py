@@ -152,7 +152,7 @@ class portfolio:
             # Calcualte the number of percentage of the profit
             if cost_basis > 0:
                 profit_pct = (profit_loss / cost_basis) * 100
-                report += f"(symbol): {position['quantity']} shares\n"
+                report += f"{symbol}: {position['quantity']} shares\n"
                 report += f" Purchase Price: {position['purchase_price']:,.0f} VND\n"
                 report += f" Current Price: {current_price:,.0f} VND\n"
                 report += f" Market Value: {market_value:,.0f} VND\n"
@@ -166,7 +166,7 @@ class portfolio:
         # Calculate realized profit
         realized_profit = sum(t['cash_change'] for t in self.trade_history if t['action'] == 'Sell')
         report += f"Unrealized P/L: {total_profit_loss:,.0f} VND\n"
-        report += f"Realized P/L: {sum(t['cash_change'] for t in self.trade_history if t['action'] == 'SELL') - sum(abs(t['cash_change']) for t in self.trade_history if t['action'] == 'BUY'):,.0f} VND\n"
+        report += f"Realized P/L: {sum(t['cash_change'] for t in self.trade_history if t['action'] == 'Sell') - sum(abs(t['cash_change']) for t in self.trade_history if t['action'] == 'BUY'):,.0f} VND\n"
         report += f"Total P/L: {total_profit_loss + realized_profit:,.0f} VND\n"
         return report
 

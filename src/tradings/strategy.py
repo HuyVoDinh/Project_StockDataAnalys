@@ -189,7 +189,13 @@ class strategy(ABC):
         # Check if we should sell any current positions
         # Check a copy of the keys to avoid modifying the dictionary during iteration
         position_to_check = list(self.portfolio.position.keys())
+
+        # for symbol in position_to_check:
+        #     data_with_prices['current_prices'][symbol] *= 1000
+
+        print(data_with_prices['current_prices'])
         for symbol in position_to_check:
+
             # Only sell if all condition in should_sell are met
             if self.should_sell(symbol, data_with_prices):
                 # Sell at current price
@@ -234,7 +240,7 @@ class strategy(ABC):
 
                             if quantity > 0:
                                 cost = current_price * quantity
-                                print(f"[{self.name}] Buying {quantity} shares of {symbol} at {current_price:,.0f} VND (Stop: {stop_loss:,.0f}) VND, Cost: {cost:,.0f} VND")
+                                print(f"[{self.name}] Buying {quantity} shares of {symbol} at {current_price:,.0f} (Stop: {stop_loss:,.0f}) VND, Cost: {cost:,.0f} VND")
                                 self.portfolio.buy(symbol, current_price, quantity)
                             else:
                                 print(f"[{self.name}] Skipping {symbol} - insufficient funds")

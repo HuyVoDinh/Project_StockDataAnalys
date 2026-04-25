@@ -27,7 +27,7 @@ class test_strategy(strategy):
     def should_buy(self, symbol, data):
         """Buy if symbol qualifies for either setups"""
         company = data['company_data'].get(symbol)
-        current_price = data.get('current_price', {}).get(symbol, 0)
+        current_price = data.get('current_prices', {}).get(symbol, 0)
 
         if company and current_price > 0:
             # Check if symbol qualifies for either setups
@@ -45,7 +45,7 @@ class test_strategy(strategy):
     def should_sell(self, symbol, data):
         """Sell if symbol qualifies for either setups"""
         company = data['company_data'].get(symbol)
-        current_price = data.get('current_price', {}).get(symbol, 0)
+        current_price = data.get('current_prices', {}).get(symbol, 0)
         position = self.portfolio.position.get(symbol)
 
         if company and current_price > 0 and position:
