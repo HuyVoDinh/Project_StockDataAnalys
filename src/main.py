@@ -44,8 +44,8 @@ def process_all_symbols():
             stock_analyzer = StockAnalyzer(symbol)
             stock_analyzer.init_Stock()
 
-            # stock_analyzer.update_data_frame("2024-01-01", "2026-04-23")
-            stock_analyzer.update_data_frame("2024-01-01", now.strftime("%Y-%m-%d"))
+            stock_analyzer.update_data_frame("2024-01-01", "2024-04-24")
+            # stock_analyzer.update_data_frame("2024-01-01", now.strftime("%Y-%m-%d"))
 
             if stock_analyzer.data_frame is None:
                 print(f"[Main][process_all_symbols] Failed to get stock data: {symbol}")
@@ -150,13 +150,13 @@ def run_strategies(company_data):
 
     # Create strategies
     strategies = [
-        # strategy1(),
-        # strategy2(),
-        # strategy3(),
-        # strategy4(),
-        # strategy5(),
-        # strategy6(),
-        # strategy7(),
+        strategy1(),
+        strategy2(),
+        strategy3(),
+        strategy4(),
+        strategy5(),
+        strategy6(),
+        strategy7(),
         test_strategy()
     ]
 

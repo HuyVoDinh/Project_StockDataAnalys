@@ -4,13 +4,13 @@ import os
 import json
 
 class portfolio:
-    def __init__(self, name, initial_cash = 1000000000):
+    def __init__(self, name, initial_cash = 1000000):
         self.name = name
         self.cash = initial_cash
         self.position = {} #Symbol{'quantity': int, 'purchase_price': float}
         self.trade_history = [] # List of trades
-        self.portfolio_file = f"trading/{name}_portfolio.json"
-        self.history_file = f"trading/{name}_history.csv"
+        self.portfolio_file = f"tradings/{name}_portfolio.json"
+        self.history_file = f"tradings/{name}_history.csv"
         self.load_portfolio()
 
     def load_portfolio(self):
@@ -26,8 +26,9 @@ class portfolio:
                 # Initialize with default values if there's an error
                 self.cash = 1000000000
                 self.position = {}
-        # If no portfoolio file exists, it will be created when save_portfolio
-
+        # If no portfolio file exists, it will be created when save_portfolio
+        else:
+            print(f"path: {self.portfolio_file} is not exists")
         # Load trade history from CSV file
         if os.path.exists(self.history_file):
             try:
@@ -49,6 +50,9 @@ class portfolio:
             #Update cash balance based on trade history
             total_cash_change = sum(t['cash_change'] for t in self.trade_history)
             self.cash += total_cash_change + 1000000000 #Initial cash + net cash changes
+        else:
+            # os.makedirs(os.path.dirname(self.history_file), exist_ok=True)
+            print(f"path: {self.history_file} is not exists")
 
     def save_portfolio(self):
         """Save current position to JSON file"""

@@ -2,13 +2,15 @@ from enum import Enum
 
 
 class Trend(Enum):
-    Up = 1
+    Fomo = -4
+    Weak = -3
+    Strong_Down = -2
     Down = -1
     Sideway = 0
-    Weak = -2
-    Fomo = -3
+    Up = 1
     Good = 2
-    Recovery = 3
+    Strong_Up = 3
+    Recovery = 4
 
 class MarketState(Enum):
     EARLY_TREND = 1
