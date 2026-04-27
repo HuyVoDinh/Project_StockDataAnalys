@@ -11,6 +11,7 @@ class Trend(Enum):
     Good = 2
     Strong_Up = 3
     Recovery = 4
+    Neutral = 5
 
 class MarketState(Enum):
     EARLY_TREND = 1
