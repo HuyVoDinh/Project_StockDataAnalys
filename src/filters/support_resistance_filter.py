@@ -191,3 +191,11 @@ class SupportResistanceFilter:
             'distance_to_support': (current_price - nearest_support) / nearest_support if nearest_support else None,
             'distance_to_resistance': (nearest_resistance - current_price) / current_price if nearest_resistance else None
         }
+
+    def identify_support_levels(self):
+        # TODO: Implement this
+        return None
+
+    def identify_resistance_level(self):
+        # TODO: Implement this
+        return None

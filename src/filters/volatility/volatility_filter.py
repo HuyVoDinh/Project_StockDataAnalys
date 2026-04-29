@@ -85,3 +85,12 @@ class VolatilityFilter:
         if company_data.StdDev_20 / company_data.price.close_price > 0.01 and company_data.StdDev_20 / company_data.price.close_price < 0.03:
             return Emplitude.Good
         return Emplitude.Bulltrap
+
+    def volatility_regime_analysis(self, company_data, periods=20):
+        # TODO: Need to implement this
+        return None
+
+    def volatility_contraction_expansion(self, company_data, periods=30):
+        # TODO: Need to implement this
+        return None
+
