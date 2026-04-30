@@ -223,9 +223,105 @@ class MarketRegimeSetup:
             'confidence': 'HIGH' if score > 85 else 'MEDIUM' if score > 70 else 'LOW'
         }
 
+    def _defensive_setup(self, company, company_data_list, price_momentum, rsi_momentum,
+                         volume_trend, volume_confidence):
+        """
+        Setup logic for defensive regime.
+        :param company:
+        :param company_data_list:
+        :param price_momentum:
+        :param rsi_momentum:
+        :param volume_trend:
+        :param volume_confidence:
+        :return:
+        """
+        current_data = company_data_list[-1]
+        current_price = current_data.price.close_price
+
+        # In defensive regime, look for high quality setups with strong risk management
+        if price_momentum in [Trend.Down, Trend.Strong_Down]:
+            return None # Avoid downtrending stocks
+
+        # Look for oversold conditions with positive momentum recovery
+        if rsi_momentum == Signal.BUY: # RSI indication oversold recovery
+            # Need support confirmation
+            # TODO: Need verify support level
+
+            # Simplified support check
+            stop_loss = current_price * 0.95 # 5% stop loss (defensive)
+            target_price = current_price * 1.04 # 4% target (conservative)
+
+            rr_ratio = (target_price - current_price) / (current_price - stop_loss) if (current_price - stop_loss) > 0 else 0
+
+            if rr_ratio < 2.0: # Need strong rr in defensive mode
+                return None
+
+            score = (volume_confidence * 0.3) + (60 * 0.4) + (rr_ratio * 10 * 0.3) # 60 for momentum
+
+            return {
+                'symbol': company.symbol,
+                'setup_type': 'DEFENSIVE',
+                'direction': 'LONG',
+                'entry_price': current_price,
+                'stop_loss': stop_loss,
+                'target_price': target_price,
+                'risk_reward': rr_ratio,
+                'score': min(100, score),
+                'confidence': 'HIGH' if score > 85 else 'MEDIUM' if score > 70 else 'LOW'
+            }
+
+        return None
+
     def _mixed_regime_setup(self, company, company_data_list, price_momentum, rsi_momentum,
                             volume_trend, institutional_activity, volume_confidence):
-        # TODO: Need to implement this
+        """
+        Setup logic for mixed regime.
+        :param company:
+        :param company_data_list:
+        :param price_momentum:
+        :param rsi_momentum:
+        :param volume_trend:
+        :param institutional_activity:
+        :param volume_confidence:
+        :return:
+        """
+        # Apply balanced criteria
+        current_data = company_data_list[-1]
+        current_price = current_data.price.close_price
+
+        # Need at least neutral momentum
+        if price_momentum == Trend.Strong_Down:
+            return None
+
+        # Volume confirmation helpful but not required
+        volume_ok = volume_trend in [Trend.Up, Trend.Sideway] or institutional_activity
+
+        if volume_ok:
+            stop_loss = current_price * 0.96 # 4% stop loss
+            target_price = current_price * 1.06 # 6% target
+
+            rr_ratio = (target_price - current_price) / (current_price - stop_loss) if (current_price - stop_loss) > 0 else 0
+
+            if rr_ratio < 1.5:
+                return None
+
+            # Score based on available factors
+            momentume_score = 70 if price_momentum in [Trend.Up, Trend.Good] else 50 if price_momentum == Trend.Sideway else 30
+            volume_score = volume_confidence if volume_confidence else 50
+
+            score = (momentume_score * 0.4) + (volume_score * 0,3) + (rr_ratio * 0.3)
+
+            return {
+                'symbol': company.symbol,
+                'setup_type': 'MIXED_REGIME',
+                'direction': 'LONG',
+                'entry_price': current_price,
+                'stop_loss': stop_loss,
+                'target_price': target_price,
+                'risk_reward': rr_ratio,
+                'score': min(100, score),
+                'confidence': 'HIGH' if score > 80 else 'MEDIUM' if score > 60 else 'LOW'
+            }
         return None
 
     def _adjust_for_regime(self, setup_result, position_sizing, risk_management):
