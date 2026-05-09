@@ -12,7 +12,6 @@ from src.models.company import CompanyData
 class RegimeShiftSetup:
     def __init__(self):
         self.regime_filter = RegimeShiftFilter()
-        self.trend_filter = TrendFilter()
         self.volatility_filter = VolatilityFilter()
         self.momentum_filter = MomentumFilter()
         self.risk_filter = RiskFilter()
