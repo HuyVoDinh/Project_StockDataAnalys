@@ -211,9 +211,10 @@ class strategy8(strategy):
             if latest_data.ADX_14.ADX and latest_data.ADX_14.ADX > 30:
                 # Strong trend
                 if latest_data.ATR_14.plus_DI and latest_data.ADX_14.minus_DI:
-                    confidence *= 1.2 # Strong bullish trend
-                else:
-                    confidence *= 0.8 # Strong bearish trend
+                    if latest_data.ADX_14.plus_DI > latest_data.ADX_14.minus_DI:
+                        confidence *= 1.2 # Strong bullish trend
+                    else:
+                        confidence *= 0.8 # Strong bearish trend
 
             # Ensure confidence level stays within reasonable bounds
             return max(0.5, min(confidence, 2.0))
