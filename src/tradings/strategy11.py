@@ -1,12 +1,13 @@
 from src.tradings.strategy import strategy
-from src.setups.professional.order_flow_setup import order_flow_setup
-from src.setups.professional.regime_shift_setup import regime_shift_setup
+from src.setups.professional.reinforcement_learning_setup import reinforcement_learning_setup
+from src.setups.professional.volatility_crush_setup import volatility_crush_setup
+from src.setups.professional.mean_reversion_setup import mean_reversion_setup
 
-class strategy9(strategy):
+class strategy10(strategy):
     def __init__(self):
-        # Order flow and regime shift setup with statistical arbitrage
-        # Professional-grade setup with adaptive positioning
-        super().__init__("Strategy9_OrderFlow_RegimeShift_StatArb", max_position=8, risk_per_trade=0.02)
+        # Reinforcement learning and volatility crush setup with mean reversion
+        # Advanced adaptive setup with volatility targeting
+        super().__init__("Strategy11_ReinforcementLearning_VolatilityCrush", max_position=7, risk_per_trade=0.018)
 
     def identify_symbols(self, data):
         """Identify symbols using order flow, regime shift, and statistical arbitrage setups"""
@@ -15,13 +16,13 @@ class strategy9(strategy):
         # Process data to identify symbols
         for symbol in data.get('symbols', []):
             company = data['company_data'].get(symbol)
-            if company and len(company.company_data) >= 30: # Need sufficient data for advanced analysis
+            if company and len(company.company_data) >= 30:  # Need sufficient data for advanced analysis
                 # Check if symbol qualifies for any of our advanced setups
-                orderflow_setup = order_flow_setup(company, None, None)
-                regime_setup = regime_shift_setup(company, None, None)
+                rl_setup = reinforcement_learning_setup(company)
+                volatility_setup = volatility_crush_setup(company)
 
-                if (orderflow_setup is not None and orderflow_setup.get('confidence', 'LOW') in ['HIGH', 'MEDIUM']) or \
-                        (regime_setup is not None and regime_setup.get('confidence', 'LOW') in ['LOW', 'MEDIUM']):
+                if (rl_setup is not None and rl_setup.get('confidence', 'LOW') in ['HIGH', 'MEDIUM']) or \
+                        (volatility_setup is not None and volatility_setup.get('confidence', 'LOW') in ['LOW', 'MEDIUM']):
                     symbols.append(symbol)
 
         return symbols
@@ -33,33 +34,33 @@ class strategy9(strategy):
 
         if company and current_price > 0 and len(company.company_data) >= 30:
             # Check our advanced setups
-            orderflow_setup = order_flow_setup(company, None, None)
-            regime_setup = regime_shift_setup(company, None, None)
+            rl_setup = reinforcement_learning_setup(company)
+            volatility_setup = volatility_crush_setup(company)
 
             # Check for strong buy signals
-            orderflow_buy = orderflow_setup is not None and \
-                           orderflow_setup.get('signal') == 'BUY' and \
-                           orderflow_setup.get('confidence') in ['HIGH', 'MEDIUM']
+            rl_buy = rl_setup is not None and \
+                            rl_setup.get('signal') == 'BUY' and \
+                            rl_setup.get('confidence') in ['HIGH', 'MEDIUM']
 
-            regime_buy = regime_setup is not None and \
-                                 regime_setup.get('signal') == 'BUY' and \
-                                 regime_setup.get('confidence') in ['MEDIUM', 'HIGH']
+            volatility_buy = volatility_setup is not None and \
+                         volatility_setup.get('signal') == 'BUY' and \
+                         volatility_setup.get('confidence') in ['MEDIUM', 'HIGH']
 
             # Need at least one strong setup
-            if orderflow_buy or regime_buy:
+            if rl_buy or volatility_buy:
                 # Ensure we have proper risk-reward ratio
                 stop_loss = self.get_stop_loss_price(symbol, current_price, data)
                 risk_per_share = abs(current_price - stop_loss)
 
                 # Calculate potential reward based on setup targets
                 target_price = 0
-                if orderflow_buy and orderflow_buy.get('target', 0) > current_price:
-                    target_price = orderflow_buy.get('target', 0)
-                elif regime_buy and regime_buy.get('target', 0) > current_price:
-                    target_price = regime_buy.get('target', 0)
+                if rl_buy and rl_buy.get('target', 0) > current_price:
+                    target_price = rl_buy.get('target', 0)
+                elif volatility_buy and volatility_buy.get('target', 0) > current_price:
+                    target_price = volatility_buy.get('target', 0)
                 else:
-                    # Fallback to 8% target for professional setups
-                    target_price = current_price * 1.1
+                    # Fallback to 7% target for professional setups
+                    target_price = current_price * 1.07
 
                 potential_reward = target_price - current_price
 
@@ -77,22 +78,22 @@ class strategy9(strategy):
         current_price = data.get('current_price', {}).get(symbol, 0)
         position = self.portfolio.positions.get(symbol)
 
-        if company and current_price > 0 and len(company.company_data) >= 30:
+        if company and current_price > 0 and len(company.company_data) >= 20:
             # Check if symbol still qualifies for our setups
-            orderflow_setup = order_flow_setup(company)
-            regime_setup = regime_shift_setup(company, None, None)
+            rl_setup = reinforcement_learning_setup(company)
+            volatility_setup = volatility_crush_setup(company)
 
             # Check for continued validity
-            orderflow_valid = orderflow_setup is not None and \
-                             orderflow_setup.get('signal') == 'BUY' and \
-                             orderflow_setup.get('confidence') in ['HIGH', 'MEDIUM']
+            rl_valid = rl_setup is not None and \
+                              rl_setup.get('signal') == 'BUY' and \
+                              rl_setup.get('confidence') in ['HIGH', 'MEDIUM']
 
-            regime_valid = regime_setup is not None and \
-                                   regime_setup.get('signal') == 'BUY' and \
-                                   regime_setup.get('confidence') in ['MEDIUM', 'HIGH']
+            volatility_valid = volatility_setup is not None and \
+                           volatility_setup.get('signal') == 'BUY' and \
+                           volatility_setup.get('confidence') in ['MEDIUM', 'HIGH']
 
             # If no longer qualifies for any setups, consider selling
-            if not orderflow_valid and not regime_valid:
+            if not rl_valid and not volatility_valid:
                 return True
 
             # Risk management: Check if stop loss is hit
@@ -100,8 +101,8 @@ class strategy9(strategy):
             if current_price <= stop_loss:
                 return True
 
-            # Take profit: Check if we've reached our target (20% for professional setup)
-            take_profit_price = position['purchase_price'] * 1.20
+            # Take profit: Check if we've reached our target (14% for professional setup)
+            take_profit_price = position['purchase_price'] * 1.14
             if current_price >= take_profit_price:
                 return True
 
@@ -122,30 +123,30 @@ class strategy9(strategy):
             latest_data = company_data.company_data[-1]
             # Use our advanced setup to determine stop loss
 
-            # Try harmonic pattern setup for stop loss
-            orderflow_setup = order_flow_setup(company_data, None, None)
-            if orderflow_setup and orderflow_setup.get('stop_loss', 0) > 0:
-                orderflow_stop = orderflow_setup.get('stop_loss', 0)
+            # Try reinforcement learning setup for stop loss
+            rl_setup = reinforcement_learning_setup(company_data)
+            if rl_setup and rl_setup.get('stop_loss', 0) > 0:
+                rl_stop = rl_setup.get('stop_loss', 0)
                 # Ensure stop loss is below entry price for long position
-                if orderflow_stop < entry_price:
-                    return orderflow_stop
+                if rl_stop < entry_price:
+                    return rl_stop
 
             # Try market microstructure setup for stop loss
-            regime_setup = regime_shift_setup(company_data, None, None,)
-            if regime_setup and regime_setup.get('stop_loss', 0) > 0:
-                regime_stop = regime_setup.get('stop_loss', 0)
+            volatility_setup = volatility_crush_setup(company_data)
+            if volatility_setup and volatility_setup.get('stop_loss', 0) > 0:
+                volatility_stop = volatility_setup.get('stop_loss', 0)
                 # Ensure stop loss is below entry price for long position
-                if regime_stop < entry_price:
-                    return regime_stop
+                if volatility_stop < entry_price:
+                    return volatility_stop
 
             # Fallback to ATR-based stop loss
             if latest_data.ATR_14 and latest_data.ATR_14 > 0:
-                # Set stop loss at 3x ATR below entry price for professtional approach
-                atr_stop = entry_price - (3.0 * latest_data.ATR_14)
-                return max(atr_stop, entry_price * 0.9)  # At least 10% below entry
+                # Set stop loss at 2.5x ATR below entry price for professtional approach
+                atr_stop = entry_price - (2.5 * latest_data.ATR_14)
+                return max(atr_stop, entry_price * 0.93)  # At least 7% below entry
 
-        # Default fallback: 10% below entry price (professional standard)
-        return entry_price * 0.9
+        # Default fallback: 7% below entry price (professional standard)
+        return entry_price * 0.93
 
     def get_confidence_level(self, symbol, data):
         """
@@ -160,41 +161,41 @@ class strategy9(strategy):
         company_data = data.get('company_data', {}).get(symbol)
         current_price = data.get('current_price', {}).get(symbol, 0)
 
-        if not company_data or current_price <= 0 or len(company_data.company_data) < 30:
+        if not company_data or current_price <= 0 or len(company_data.company_data) < 20:
             return 1.0  # Default confidence level
 
         confidence = 1.0
 
         # Check advanced setups for confidence
-        orderflow_setup = order_flow_setup(company_data, None, None)
-        regime_setup = regime_shift_setup(company_data, None, None)
+        rl_setup = reinforcement_learning_setup(company_data)
+        volatility_setup = volatility_crush_setup(company_data)
 
         # orderflow pattern confidence
-        if orderflow_setup:
-            orderflow_confidence = orderflow_setup.get('confidence', 'LOW')
-            if orderflow_confidence == 'HIGH':
-                confidence *= 1.35
-            elif orderflow_confidence == 'MEDIUM':
-                confidence *= 1.2
+        if rl_setup:
+            rl_confidence = rl_setup.get('confidence', 'LOW')
+            if rl_confidence == 'HIGH':
+                confidence *= 1.3
+            elif rl_confidence == 'MEDIUM':
+                confidence *= 1.15
 
         # regime shift confidence
-        if regime_setup:
-            regime_confidence = regime_setup.get('confidence', 'LOW')
-            if regime_confidence == 'HIGH':
-                confidence *= 1.3
-            elif regime_confidence == 'MEDIUM':
-                confidence *= 1.15
+        if volatility_setup:
+            volatility_confidence = volatility_setup.get('confidence', 'LOW')
+            if volatility_confidence == 'HIGH':
+                confidence *= 1.25
+            elif volatility_confidence == 'MEDIUM':
+                confidence *= 1.1
 
         # Additional technical confirmation
         latest_data = company_data.company_data[-1]
 
         # RSI confirmation (professional range 50-70 for long positions)
-        if 5 <= latest_data.RSI_14 <= 70:
+        if 50 <= latest_data.RSI_14 <= 70:
             confidence *= 1.1
         elif latest_data.RSI_14 > 75:
-            confidence *= 0.8 # Overbought
+            confidence *= 0.85  # Overbought
         elif latest_data.RSI_14 < 25:
-            confidence *= 0.85  # Oversold (may reverse)
+            confidence *= 0.9  # Oversold (may reverse)
 
         # Moving average confirmation (price above key MAs)
         if latest_data.price.close_price > latest_data.moving_average_20.ma_price:
@@ -202,14 +203,19 @@ class strategy9(strategy):
         if latest_data.moving_average_10.ma_price > latest_data.moving_average_20.ma_price:
             confidence *= 1.1  # Bullish trend
 
+        # Bollinger Band confirmation (price near upper band for momentum)
+        if latest_data.Bollinger_Bands and latest_data.price.close_price > latest_data.Bollinger_Bands.BB_Upper:
+            confidence *= 1.15 # Strong momentum
+
         # ADX confirmation (strong trend)
         if latest_data.ADX_14.ADX and latest_data.ADX_14.ADX > 25:
             # Strong trend
             if latest_data.ATR_14.plus_DI and latest_data.ADX_14.minus_DI:
                 if latest_data.ADX_14.plus_DI > latest_data.ADX_14.minus_DI:
-                    confidence *= 1.25  # Strong bullish trend
+                    confidence *= 1.2  # Strong bullish trend
                 else:
-                    confidence *= 0.75  # Strong bearish trend
+                    confidence *= 0.8  # Strong bearish trend
 
         # Ensure confidence level stays within reasonable bounds
         return max(0.5, min(confidence, 2.0))
+

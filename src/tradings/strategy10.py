@@ -1,7 +1,5 @@
 from src.tradings.strategy import strategy
 from src.setups.professional.ml_pattern_recognition_setup import MLPatternRecognitionSetup, ml_pattern_recognition_setup
-from src.setups.professional.pairs_trading_setup import PairsTradingSetup
-from src.setups.professional.relative_strength_setup import RelativeStrengthSetup
 
 class strategy10(strategy):
     def __init__(self):
